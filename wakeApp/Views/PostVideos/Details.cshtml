@@ -1,0 +1,23 @@
+﻿@model wakeApp.Models.PostVideo
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<div>
+    <div class="card mb-3" style="border: none;">
+        <div class="template-video">
+            <video class="video" controls="controls" dropzone>
+                <source src="@Html.DisplayFor(model => model.VideoFile)" type="video/mp4">
+            </video>
+        </div>
+        <div class="card-body">
+            <h5 class="card-title">@Html.DisplayFor(model => model.Title)</h5>
+            @Html.DisplayFor(model => model.Posted)
+            <hr />
+            <p class="card-text">@Html.DisplayFor(model => model.Description)</p>
+        </div>
+    </div>
+    <a asp-action="Edit" asp-route-id="@Model?.Id">Edit</a> |
+    <a asp-action="Index">Back to List</a>
+</div>
