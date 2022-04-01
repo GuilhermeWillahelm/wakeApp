@@ -92,7 +92,7 @@ namespace wakeApp.Controllers
             HttpResponseMessage response = _httpClient.PostAsync(_httpClient.BaseAddress + "PostVideos/CreatePostVideo", content).Result;
             if (response.IsSuccessStatusCode)
             {
-                return RedirectToAction("Index");
+                return RedirectToAction(nameof(Index));
             }
             return View(postVideo);
         }
@@ -100,17 +100,27 @@ namespace wakeApp.Controllers
         // GET: PostVideos/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
+            //ViewData["UserId"] = new SelectList(_context.Set<User>(), "Id", "Id", postVideo.UserId);
+
             if (id == null)
             {
                 return NotFound();
             }
 
-            var postVideo = await _context.PostVideos.FindAsync(id);
+            PostVideo postVideo = new PostVideo();
+            HttpResponseMessage response = _httpClient.GetAsync(_httpClient.BaseAddress + "PostVideos/" + id).Result;
+
+            if (response.IsSuccessStatusCode)
+            {
+                var data = response.Content.ReadAsStringAsync().Result;
+                postVideo = JsonConvert.DeserializeObject<PostVideo>(data);
+            }
+
             if (postVideo == null)
             {
                 return NotFound();
             }
-            ViewData["UserId"] = new SelectList(_context.Set<User>(), "Id", "Id", postVideo.UserId);
+
             return View(postVideo);
         }
 
@@ -119,35 +129,28 @@ namespace wakeApp.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Title,Description")] PostVideo postVideo)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Title,Description")] PostVideo postVideo, [Bind("FileVideo")] IFormFile FileVideo, [Bind("FileImage")] IFormFile FileImage)
         {
             if (id != postVideo.Id)
             {
                 return NotFound();
             }
 
-            if (ModelState.IsValid)
+            postVideo.VideoFile = UploadVideo(FileVideo);
+            postVideo.ThumbImage = UploadImage(FileImage);
+            postVideo.Posted = DateTime.Now;
+            postVideo.UserId = 1;
+
+            string data = JsonConvert.SerializeObject(postVideo);
+            StringContent content = new StringContent(data, Encoding.UTF8, "application/json");
+
+            HttpResponseMessage response = _httpClient.PutAsync(_httpClient.BaseAddress + "PostVideos/UpdatePostVideo/" + id, content).Result;
+            if (response.IsSuccessStatusCode)
             {
-                try
-                {
-                    _context.Update(postVideo);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!PostVideoExists(postVideo.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["UserId"] = new SelectList(_context.Set<User>(), "Id", "Id", postVideo.UserId);
             return View(postVideo);
+            //ViewData["UserId"] = new SelectList(_context.Set<User>(), "Id", "Id", postVideo.UserId);
         }
 
         // GET: PostVideos/Delete/5
@@ -158,7 +161,15 @@ namespace wakeApp.Controllers
                 return NotFound();
             }
 
-            var postVideo = await _context.PostVideos.FirstOrDefaultAsync(m => m.Id == id);
+            PostVideo postVideo = new PostVideo();
+            HttpResponseMessage response = _httpClient.GetAsync(_httpClient.BaseAddress + "PostVideos/" + id).Result;
+
+            if (response.IsSuccessStatusCode)
+            {
+                var data = response.Content.ReadAsStringAsync().Result;
+                postVideo = JsonConvert.DeserializeObject<PostVideo>(data);
+            }
+
             if (postVideo == null)
             {
                 return NotFound();
@@ -172,9 +183,14 @@ namespace wakeApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var postVideo = await _context.PostVideos.FindAsync(id);
-            _context.PostVideos.Remove(postVideo);
-            await _context.SaveChangesAsync();
+
+            HttpResponseMessage response = _httpClient.DeleteAsync(_httpClient.BaseAddress + "PostVideos/" + id).Result;
+
+            if (response.IsSuccessStatusCode)
+            {
+                return RedirectToAction(nameof(Index));
+            }
+
             return RedirectToAction(nameof(Index));
         }
 
