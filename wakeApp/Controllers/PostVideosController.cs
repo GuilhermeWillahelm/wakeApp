@@ -26,11 +26,15 @@ namespace wakeApp.Controllers
         }
 
         // GET: PostVideos
-        public IActionResult Index()
+        public IActionResult Index(string? searchString)
         {
             ///var wakeAppContext = _context.PostVideos.Include(p => p.User);
             List<PostVideo> videos = new List<PostVideo>();
             HttpResponseMessage response = _httpClient.GetAsync(_httpClient.BaseAddress + "PostVideos").Result;
+            if (!String.IsNullOrEmpty(searchString))
+            {
+               response = _httpClient.GetAsync(_httpClient.BaseAddress + "PostVideos?searchString=" + searchString).Result;
+            }
 
             if (response.IsSuccessStatusCode)
             {

@@ -24,6 +24,10 @@ body {
     background: none;
 }
 
+.card-body {
+    color: white;
+}
+
 .card img {
     height: 12rem;
     border: solid;
@@ -36,6 +40,32 @@ body {
         color: white;
         text-decoration: none;
     }
+
+.form-group label {
+    color: white;
+}
+
+.label-file {
+    background-color: cornflowerblue;
+    width: 415px;
+    height: 100px;
+    margin-top: 15px;
+    margin-bottom: 15px;
+    text-align: center;
+    cursor: pointer;
+}
+
+.label-file i {
+    margin-top: 15px;
+    font-size: 50px;    
+}
+.input-file {
+    display: none;
+}
+
+input[type="submit"] {
+    width: 415px;
+}
 
 .template-video {
     width: 1280px;

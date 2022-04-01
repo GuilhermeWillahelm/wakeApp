@@ -4,9 +4,8 @@
     ViewData["Title"] = "Create";
 }
 
-<h1>Create</h1>
+<h1 style="color: white;">Create</h1>
 
-<h4>PostVideo</h4>
 <hr />
 <div class="row">
     <div class="col-md-4">
@@ -19,26 +18,26 @@
             </div>
             <div class="form-group">
                 <label asp-for="Description" class="control-label"></label>
-                <input asp-for="Description" class="form-control" />
+                <textarea asp-for="Description" class="form-control" rows="6"></textarea>
                 <span asp-validation-for="Description" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label for="FileVideo" class="control-label"></label>
-                <input name="FileVideo" type="file" class="form-control" placeholder="Selecione o vídeo" />
+                <label for="FileVideo" class="control-label label-file">
+                    <i class="fa-solid fa-upload"></i>
+                    <p>Upload Vídeo</p>
+                </label>
+                <input name="FileVideo" type="file" class="form-control input-file" id="FileVideo" />
                 <span validation-for="FileVideo" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label afor="FileImage" class="control-label"></label>
-                <input name="FileImage" type="file" class="form-control" placeholder="Selecione a imagem"/>
+                <label for="FileImage" class="control-label label-file">
+                    <i class="fa-solid fa-upload"></i>
+                    <p>Upload Imagem</p>
+                </label>
+                <input name="FileImage" type="file" class="form-control input-file" id="FileImage"/>
                 <span validation-for="FileImage" class="text-danger"></span>
             </div>
-            <!--
-            <div class="form-group">
-                <label asp-for="UserId" class="control-label"></label>
-                <select asp-for="UserId" class ="form-control" asp-items="ViewBag.UserId"></select>
-            </div>
-            -->
-            <div class="form-group">
+            <div class="form-group" style="margin-top: 20px; margin-bottom: 20px;">
                 <input type="submit" value="Create" class="btn btn-primary" />
             </div>
         </form>
@@ -46,7 +45,7 @@
 </div>
 
 <div>
-    <a asp-action="Index">Back to List</a>
+    <a asp-action="Index"><i class="fa-solid fa-arrow-left"></i> Back to List</a>
 </div>
 
 @section Scripts {
