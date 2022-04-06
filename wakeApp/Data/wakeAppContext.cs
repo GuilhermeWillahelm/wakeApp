@@ -15,7 +15,9 @@ namespace wakeApp.Data
         {
         }
 
-        public DbSet<wakeApp.Models.Video> Videos { get; set; }
         public DbSet<PostVideo> PostVideos { get; set; }
+        public DbSet<User> Users { get; set; }
+        public DbSet<UserLogin> UserLogins { get; set; }
+        public DbSet<Channel> Channels { get; set; }
     }
 }
