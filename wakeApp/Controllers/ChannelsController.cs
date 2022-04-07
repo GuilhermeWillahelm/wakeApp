@@ -81,7 +81,7 @@ namespace wakeApp.Controllers
         public IActionResult Create([Bind("Id,ChannelName,ChannelDescription,CreatedChannel")] Channel channel, [Bind("BannerChannel")] IFormFile BannerChannel)
         {
             channel.ImageBanner = UploadImage(BannerChannel);
-            channel.UserId = 2;
+            channel.UserId = GetUserId();
             channel.FollwerId = 0;
 
             var data = JsonConvert.SerializeObject(channel);
@@ -127,7 +127,7 @@ namespace wakeApp.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,ChannelName,ChannelDescription")] Channel channel, [Bind("BannerImage")] IFormFile BannerImage)
+        public IActionResult Edit(int id, [Bind("Id,ChannelName,ChannelDescription")] Channel channel, [Bind("BannerImage")] IFormFile BannerImage)
         {
             if (id != channel.Id)
             {
@@ -135,7 +135,7 @@ namespace wakeApp.Controllers
             }
 
             channel.ImageBanner = UploadImage(BannerImage);
-            channel.UserId = 2;
+            channel.UserId = GetUserId();
 
             var data = JsonConvert.SerializeObject(channel);
             StringContent content = new StringContent(data, Encoding.UTF8, "application/json");
@@ -178,7 +178,7 @@ namespace wakeApp.Controllers
         // POST: Channels/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
+        public IActionResult DeleteConfirmed(int id)
         {
             HttpResponseMessage response = _httpClient.DeleteAsync(_httpClient.BaseAddress + "Channels/" + id).Result;
 
@@ -213,6 +213,19 @@ namespace wakeApp.Controllers
             var uploadResult = cloudinary.Upload(uploadParams);
 
             return uploadResult.SecureUrl.OriginalString;
+        }
+
+        private int GetUserId()
+        {
+            var user = HttpContext.User.Claims.Where(u => u.Type == ClaimTypes.NameIdentifier).Select(x => x.Value);
+
+            var userid = "";
+            foreach (var claim in user)
+            {
+                userid = claim;
+            }
+
+            return int.Parse(userid);
         }
     }
 }

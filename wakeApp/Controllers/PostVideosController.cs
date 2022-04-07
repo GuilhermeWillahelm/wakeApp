@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 using CloudinaryDotNet;
@@ -24,11 +25,9 @@ namespace wakeApp.Controllers
         {
             _context = context;
         }
-
         // GET: PostVideos
         public IActionResult Index(string? searchString)
         {
-            ///var wakeAppContext = _context.PostVideos.Include(p => p.User);
             List<PostVideo> videos = new List<PostVideo>();
             HttpResponseMessage response = _httpClient.GetAsync(_httpClient.BaseAddress + "PostVideos").Result;
             if (!String.IsNullOrEmpty(searchString))
@@ -88,7 +87,7 @@ namespace wakeApp.Controllers
             postVideo.VideoFile = UploadVideo(FileVideo);
             postVideo.ThumbImage = UploadImage(FileImage);
             postVideo.Posted = DateTime.Now;
-            postVideo.UserId = 1;
+            postVideo.UserId = GetUserId();
 
             string data = JsonConvert.SerializeObject(postVideo);
             StringContent content = new StringContent(data, Encoding.UTF8, "application/json");
@@ -143,7 +142,7 @@ namespace wakeApp.Controllers
             postVideo.VideoFile = UploadVideo(FileVideo);
             postVideo.ThumbImage = UploadImage(FileImage);
             postVideo.Posted = DateTime.Now;
-            postVideo.UserId = 1;
+            postVideo.UserId = GetUserId();
 
             string data = JsonConvert.SerializeObject(postVideo);
             StringContent content = new StringContent(data, Encoding.UTF8, "application/json");
@@ -202,6 +201,20 @@ namespace wakeApp.Controllers
         {
             return _context.PostVideos.Any(e => e.Id == id);
         }
+
+        private int GetUserId()
+        {
+            var user = HttpContext.User.Claims.Where(u => u.Type == ClaimTypes.NameIdentifier).Select(x => x.Value);
+
+            var userid = "";
+            foreach (var claim in user)
+            {
+                userid = claim;
+            }
+
+            return int.Parse(userid);
+        }
+
         private string UploadImage(IFormFile file)
         {
             Account account = new Account("imagedpy", "882864429614789", "J0ISV-xrcX_pod7fhdyLSJ06Gl4");

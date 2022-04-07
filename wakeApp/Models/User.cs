@@ -1,4 +1,5 @@
-﻿namespace wakeApp.Models
+﻿
+namespace wakeApp.Models
 {
     public class User
     {

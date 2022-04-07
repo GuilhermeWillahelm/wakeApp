@@ -4,11 +4,15 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using wakeApp.Data;
 using wakeApp.Models;
 using Newtonsoft.Json;
+using System.Security.Claims;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authentication.Cookies;
 
 namespace wakeApp.Controllers
 {
@@ -16,6 +20,8 @@ namespace wakeApp.Controllers
     {
         private readonly wakeAppContext _context;
         HttpClient _httpClient = new HttpClient() { BaseAddress = new Uri("https://localhost:7099/api/") };
+        private readonly SignInManager<User> signInManager;
+        private readonly UserManager<User> userManager;
 
         public UsersController(wakeAppContext context)
         {
@@ -87,7 +93,26 @@ namespace wakeApp.Controllers
 
             if (response.IsSuccessStatusCode)
             {
-                return RedirectToAction(nameof(Index));
+                data = response.Content.ReadAsStringAsync().Result;
+                login = JsonConvert.DeserializeObject<UserLogin>(data);
+
+                List<Claim> diretoAcesso = new List<Claim> { 
+                    new Claim(ClaimTypes.NameIdentifier, login.Id.ToString()),
+                    new Claim(ClaimTypes.Name, login.UserName)
+                };
+
+                var identity = new ClaimsIdentity(diretoAcesso, CookieAuthenticationDefaults.AuthenticationScheme);
+                var userMain = new ClaimsPrincipal( identity );
+
+                var authProperties = new AuthenticationProperties
+                {
+                    ExpiresUtc = DateTime.Now.AddHours(8),
+                    IssuedUtc = DateTime.Now
+                };
+
+                var userSession = HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, userMain, authProperties);
+
+                return RedirectToRoute(new { controller = "PostVideos", action = "Index", userSession });
             }
             return View();
         }
