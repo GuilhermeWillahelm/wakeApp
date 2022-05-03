@@ -3,18 +3,20 @@ using wakeApp.Models;
 using Microsoft.EntityFrameworkCore;
 using wakeApp.Services;
 using Newtonsoft.Json;
+using System.Text;
 
 namespace wakeApp.Repositories
 {
     public class PostVideoRepository : IPostVideoRepository
     {
-        private readonly wakeAppContext _context;
         HttpClient _httpClient = new HttpClient() { BaseAddress = new Uri("https://localhost:7099/api/") };
         private readonly IUserService _userService;
+        private readonly IUploadService _uploadService;
 
-        public PostVideoRepository(wakeAppContext context)
+        public PostVideoRepository(IUserService userService, IUploadService uploadService)
         {
-            _context = context;
+            _userService = userService;
+            _uploadService = uploadService;
         }
 
         public List<PostVideo> GetAllVideos(string? searchString)
@@ -34,6 +36,86 @@ namespace wakeApp.Repositories
             }
 
             return videos;
+        }
+
+        public PostVideo GetPostVideo(int? id)
+        {
+            if (id == null)
+            {
+                return null;
+            }
+
+            PostVideo postVideo = new PostVideo();
+            HttpResponseMessage response = _httpClient.GetAsync(_httpClient.BaseAddress + "PostVideos/" + id).Result;
+
+            if (response.IsSuccessStatusCode)
+            {
+                var data = response.Content.ReadAsStringAsync().Result;
+                postVideo = JsonConvert.DeserializeObject<PostVideo>(data);
+            }
+
+            if (postVideo == null)
+            {
+                return null;
+            }
+
+            return postVideo;
+
+        }
+
+        public PostVideo CreatePostVideo(PostVideo postVideo, IFormFile fileImage, IFormFile fileVideo)
+        {
+            postVideo.VideoFile = _uploadService.UploadVideo(fileVideo);
+            postVideo.ThumbImage = _uploadService.UploadImage(fileImage);
+            postVideo.Posted = DateTime.Now;
+            postVideo.UserId = _userService.GetUserId();
+
+            string data = JsonConvert.SerializeObject(postVideo);
+            StringContent content = new StringContent(data, Encoding.UTF8, "application/json");
+
+            HttpResponseMessage response = _httpClient.PostAsync(_httpClient.BaseAddress + "PostVideos/CreatePostVideo", content).Result;
+            if (response.IsSuccessStatusCode)
+            {
+                return null;
+            }
+
+            return postVideo;
+        }
+
+        public PostVideo EditVideo(int id, PostVideo postVideo, IFormFile fileImage, IFormFile fileVideo)
+        {
+            if (id != postVideo.Id)
+            {
+                return null;
+            }
+
+            postVideo.VideoFile = _uploadService.UploadVideo(fileVideo);
+            postVideo.ThumbImage = _uploadService.UploadImage(fileImage);
+            postVideo.Posted = DateTime.Now;
+            postVideo.UserId = _userService.GetUserId();
+
+            string data = JsonConvert.SerializeObject(postVideo);
+            StringContent content = new StringContent(data, Encoding.UTF8, "application/json");
+
+            HttpResponseMessage response = _httpClient.PutAsync(_httpClient.BaseAddress + "PostVideos/UpdatePostVideo/" + id, content).Result;
+            if (response.IsSuccessStatusCode)
+            {
+                return null;
+            }
+
+            return postVideo;
+        }
+
+        public bool DeleteVideo(int id)
+        {
+            HttpResponseMessage response = _httpClient.DeleteAsync(_httpClient.BaseAddress + "PostVideos/" + id).Result;
+
+            if (!response.IsSuccessStatusCode)
+            {
+                return false;
+            }
+
+            return true;
         }
     }
 }

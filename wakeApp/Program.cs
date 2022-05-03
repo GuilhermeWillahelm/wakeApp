@@ -11,8 +11,10 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddDbContext<wakeAppContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("wakeAppContext")));
+
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IUploadService, UploadService>();
 builder.Services.AddScoped<IPostVideoRepository, PostVideoRepository>();
 
 // Add services to the container.
