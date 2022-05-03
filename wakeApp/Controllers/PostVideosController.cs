@@ -1,52 +1,46 @@
 ﻿#nullable disable
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 using CloudinaryDotNet;
 using CloudinaryDotNet.Actions;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using wakeApp.Data;
 using wakeApp.Models;
+using wakeApp.Services;
+using wakeApp.Repositories;
 
 namespace wakeApp.Controllers
 {
     public class PostVideosController : Controller
     {
-        private readonly wakeAppContext _context;
+        private readonly IPostVideoRepository _repository;
         HttpClient _httpClient = new HttpClient() { BaseAddress = new Uri("https://localhost:7099/api/") };
+        private readonly IUserService _userService;
 
-        public PostVideosController(wakeAppContext context)
+        public PostVideosController(IPostVideoRepository repository, IUserService userService)
         {
-            _context = context;
+            _repository = repository;
+            _userService = userService;
         }
         // GET: PostVideos
         public IActionResult Index(string? searchString)
         {
+            
             List<PostVideo> videos = new List<PostVideo>();
-            HttpResponseMessage response = _httpClient.GetAsync(_httpClient.BaseAddress + "PostVideos").Result;
-            if (!String.IsNullOrEmpty(searchString))
-            {
-               response = _httpClient.GetAsync(_httpClient.BaseAddress + "PostVideos?searchString=" + searchString).Result;
-            }
 
-            if (response.IsSuccessStatusCode)
-            {
-                var data = response.Content.ReadAsStringAsync().Result;
-                videos = JsonConvert.DeserializeObject<List<PostVideo>>(data);
-            }
-
+            ViewBag.NameLogin = _userService.GetUserName();
+            videos = _repository.GetAllVideos(searchString);
+            
             return View(videos.ToList());
         }
 
         // GET: PostVideos/Details/5
         public ActionResult Details(int? id)
         {
+            ViewBag.NameLogin = _userService.GetUserName();
+
             if (id == null)
             {
                 return NotFound();
@@ -72,7 +66,7 @@ namespace wakeApp.Controllers
         // GET: PostVideos/Create
         public IActionResult Create()
         {
-            //ViewData["UserId"] = new SelectList(_context.Set<User>(), "Id", "Id");
+            ViewBag.NameLogin = _userService.GetUserName();
             return View();
         }
 
@@ -87,7 +81,7 @@ namespace wakeApp.Controllers
             postVideo.VideoFile = UploadVideo(FileVideo);
             postVideo.ThumbImage = UploadImage(FileImage);
             postVideo.Posted = DateTime.Now;
-            postVideo.UserId = GetUserId();
+            postVideo.UserId = _userService.GetUserId();
 
             string data = JsonConvert.SerializeObject(postVideo);
             StringContent content = new StringContent(data, Encoding.UTF8, "application/json");
@@ -142,7 +136,7 @@ namespace wakeApp.Controllers
             postVideo.VideoFile = UploadVideo(FileVideo);
             postVideo.ThumbImage = UploadImage(FileImage);
             postVideo.Posted = DateTime.Now;
-            postVideo.UserId = GetUserId();
+            postVideo.UserId = _userService.GetUserId();
 
             string data = JsonConvert.SerializeObject(postVideo);
             StringContent content = new StringContent(data, Encoding.UTF8, "application/json");
@@ -197,23 +191,24 @@ namespace wakeApp.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        private bool PostVideoExists(int id)
-        {
-            return _context.PostVideos.Any(e => e.Id == id);
-        }
 
         private int GetUserId()
         {
             var user = HttpContext.User.Claims.Where(u => u.Type == ClaimTypes.NameIdentifier).Select(x => x.Value);
+            //var user1 = HttpContext.User.Claims.Where(u => u.Type == ClaimTypes.Name).Select(x => x.Value);
+            int idUser = int.Parse(user.Last());
 
-            var userid = "";
-            foreach (var claim in user)
-            {
-                userid = claim;
-            }
-
-            return int.Parse(userid);
+            return idUser;
         }
+
+        private string GetUserName()
+        {
+            var user = HttpContext.User.Claims.Where(u => u.Type == ClaimTypes.Name).Select(x => x.Value);
+            //var user1 = HttpContext.User.Claims.Where(u => u.Type == ClaimTypes.Name).Select(x => x.Value);
+            return user.Last();
+        }
+
+
 
         private string UploadImage(IFormFile file)
         {

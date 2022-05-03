@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 using CloudinaryDotNet;
@@ -9,6 +10,7 @@ using CloudinaryDotNet.Actions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using wakeApp.Services;
 using Newtonsoft.Json;
 using wakeApp.Data;
 using wakeApp.Models;
@@ -19,10 +21,12 @@ namespace wakeApp.Controllers
     {
         private readonly wakeAppContext _context;
         HttpClient _httpClient = new HttpClient() { BaseAddress = new Uri("https://localhost:7099/api/") };
+        private readonly IUserService _userService;
 
-        public ChannelsController(wakeAppContext context)
+        public ChannelsController(wakeAppContext context, IUserService userService)
         {
             _context = context;
+            _userService = userService;
         }
 
         // GET: Channels
@@ -81,7 +85,7 @@ namespace wakeApp.Controllers
         public IActionResult Create([Bind("Id,ChannelName,ChannelDescription,CreatedChannel")] Channel channel, [Bind("BannerChannel")] IFormFile BannerChannel)
         {
             channel.ImageBanner = UploadImage(BannerChannel);
-            channel.UserId = GetUserId();
+            channel.UserId = _userService.GetUserId();
             channel.FollwerId = 0;
 
             var data = JsonConvert.SerializeObject(channel);
@@ -135,7 +139,7 @@ namespace wakeApp.Controllers
             }
 
             channel.ImageBanner = UploadImage(BannerImage);
-            channel.UserId = GetUserId();
+            channel.UserId = _userService.GetUserId();
 
             var data = JsonConvert.SerializeObject(channel);
             StringContent content = new StringContent(data, Encoding.UTF8, "application/json");
@@ -215,17 +219,5 @@ namespace wakeApp.Controllers
             return uploadResult.SecureUrl.OriginalString;
         }
 
-        private int GetUserId()
-        {
-            var user = HttpContext.User.Claims.Where(u => u.Type == ClaimTypes.NameIdentifier).Select(x => x.Value);
-
-            var userid = "";
-            foreach (var claim in user)
-            {
-                userid = claim;
-            }
-
-            return int.Parse(userid);
-        }
     }
 }

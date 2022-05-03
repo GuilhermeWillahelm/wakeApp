@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using wakeApp.Data;
+using wakeApp.Services;
 using wakeApp.Models;
 using Newtonsoft.Json;
 using System.Security.Claims;
@@ -20,17 +21,18 @@ namespace wakeApp.Controllers
     {
         private readonly wakeAppContext _context;
         HttpClient _httpClient = new HttpClient() { BaseAddress = new Uri("https://localhost:7099/api/") };
-        private readonly SignInManager<User> signInManager;
-        private readonly UserManager<User> userManager;
+        private readonly IUserService _userService;
 
-        public UsersController(wakeAppContext context)
+        public UsersController(wakeAppContext context, IUserService userService)
         {
             _context = context;
+            _userService = userService;
         }
 
         // GET: Users
         public IActionResult Index()
         {
+            ViewBag.NameLogin = _userService.GetUserName();
             return RedirectToRoute(new { controller = "PostVideos", action = "Index"});
         }
 
@@ -55,6 +57,7 @@ namespace wakeApp.Controllers
         // GET: Users/Create
         public IActionResult Create()
         {
+            ViewBag.NameLogin = _userService.GetUserName();
             return View();
         }
 
