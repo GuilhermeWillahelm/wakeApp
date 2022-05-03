@@ -13,9 +13,9 @@ builder.Services.AddDbContext<wakeAppContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("wakeAppContext")));
 
 builder.Services.AddHttpContextAccessor();
-builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IUploadService, UploadService>();
 builder.Services.AddScoped<IPostVideoRepository, PostVideoRepository>();
+builder.Services.AddScoped<IUsersRepository, UsersRepository>();
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();

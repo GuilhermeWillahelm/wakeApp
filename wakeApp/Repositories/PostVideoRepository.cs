@@ -1,6 +1,4 @@
-﻿using wakeApp.Data;
-using wakeApp.Models;
-using Microsoft.EntityFrameworkCore;
+﻿using wakeApp.Models;
 using wakeApp.Services;
 using Newtonsoft.Json;
 using System.Text;
@@ -10,12 +8,12 @@ namespace wakeApp.Repositories
     public class PostVideoRepository : IPostVideoRepository
     {
         HttpClient _httpClient = new HttpClient() { BaseAddress = new Uri("https://localhost:7099/api/") };
-        private readonly IUserService _userService;
+        private readonly IUsersRepository _usersRepository;
         private readonly IUploadService _uploadService;
 
-        public PostVideoRepository(IUserService userService, IUploadService uploadService)
+        public PostVideoRepository(IUsersRepository usersRepository, IUploadService uploadService)
         {
-            _userService = userService;
+            _usersRepository = usersRepository;
             _uploadService = uploadService;
         }
 
@@ -68,7 +66,7 @@ namespace wakeApp.Repositories
             postVideo.VideoFile = _uploadService.UploadVideo(fileVideo);
             postVideo.ThumbImage = _uploadService.UploadImage(fileImage);
             postVideo.Posted = DateTime.Now;
-            postVideo.UserId = _userService.GetUserId();
+            postVideo.UserId = _usersRepository.GetUserId();
 
             string data = JsonConvert.SerializeObject(postVideo);
             StringContent content = new StringContent(data, Encoding.UTF8, "application/json");
@@ -92,7 +90,7 @@ namespace wakeApp.Repositories
             postVideo.VideoFile = _uploadService.UploadVideo(fileVideo);
             postVideo.ThumbImage = _uploadService.UploadImage(fileImage);
             postVideo.Posted = DateTime.Now;
-            postVideo.UserId = _userService.GetUserId();
+            postVideo.UserId = _usersRepository.GetUserId();
 
             string data = JsonConvert.SerializeObject(postVideo);
             StringContent content = new StringContent(data, Encoding.UTF8, "application/json");

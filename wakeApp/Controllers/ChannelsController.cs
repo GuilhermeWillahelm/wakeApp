@@ -10,7 +10,7 @@ using CloudinaryDotNet.Actions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using wakeApp.Services;
+using wakeApp.Repositories;
 using Newtonsoft.Json;
 using wakeApp.Data;
 using wakeApp.Models;
@@ -21,12 +21,12 @@ namespace wakeApp.Controllers
     {
         private readonly wakeAppContext _context;
         HttpClient _httpClient = new HttpClient() { BaseAddress = new Uri("https://localhost:7099/api/") };
-        private readonly IUserService _userService;
+        private readonly IUsersRepository _usersRepository;
 
-        public ChannelsController(wakeAppContext context, IUserService userService)
+        public ChannelsController(wakeAppContext context, IUsersRepository usersRepository)
         {
             _context = context;
-            _userService = userService;
+            _usersRepository = usersRepository;
         }
 
         // GET: Channels
@@ -73,7 +73,7 @@ namespace wakeApp.Controllers
         // GET: Channels/Create
         public IActionResult Create()
         {
-            //ViewData["UserId"] = new SelectList(_context.Users, "Id", "Id");
+            @ViewBag.NameLogin = _usersRepository.GetUserName();
             return View();
         }
 
@@ -85,7 +85,7 @@ namespace wakeApp.Controllers
         public IActionResult Create([Bind("Id,ChannelName,ChannelDescription,CreatedChannel")] Channel channel, [Bind("BannerChannel")] IFormFile BannerChannel)
         {
             channel.ImageBanner = UploadImage(BannerChannel);
-            channel.UserId = _userService.GetUserId();
+            channel.UserId = _usersRepository.GetUserId();
             channel.FollwerId = 0;
 
             var data = JsonConvert.SerializeObject(channel);
@@ -139,7 +139,7 @@ namespace wakeApp.Controllers
             }
 
             channel.ImageBanner = UploadImage(BannerImage);
-            channel.UserId = _userService.GetUserId();
+            channel.UserId = _usersRepository.GetUserId();
 
             var data = JsonConvert.SerializeObject(channel);
             StringContent content = new StringContent(data, Encoding.UTF8, "application/json");
@@ -150,7 +150,6 @@ namespace wakeApp.Controllers
                 return RedirectToAction(nameof(Index));
             }
 
-            //ViewData["UserId"] = new SelectList(_context.Users, "Id", "Id", channel.UserId);
             return View(channel);
         }
 

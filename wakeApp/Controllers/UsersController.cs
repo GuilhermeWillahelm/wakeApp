@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using wakeApp.Data;
 using wakeApp.Services;
+using wakeApp.Repositories;
 using wakeApp.Models;
 using Newtonsoft.Json;
 using System.Security.Claims;
@@ -21,18 +22,18 @@ namespace wakeApp.Controllers
     {
         private readonly wakeAppContext _context;
         HttpClient _httpClient = new HttpClient() { BaseAddress = new Uri("https://localhost:7099/api/") };
-        private readonly IUserService _userService;
+        private readonly IUsersRepository _usersRepository;
 
-        public UsersController(wakeAppContext context, IUserService userService)
+        public UsersController(wakeAppContext context, IUsersRepository usersRepository)
         {
             _context = context;
-            _userService = userService;
+            _usersRepository = usersRepository;
         }
 
         // GET: Users
         public IActionResult Index()
         {
-            ViewBag.NameLogin = _userService.GetUserName();
+            ViewBag.NameLogin = _usersRepository.GetUserName();
             return RedirectToRoute(new { controller = "PostVideos", action = "Index"});
         }
 
@@ -57,7 +58,7 @@ namespace wakeApp.Controllers
         // GET: Users/Create
         public IActionResult Create()
         {
-            ViewBag.NameLogin = _userService.GetUserName();
+            ViewBag.NameLogin = _usersRepository.GetUserName();
             return View();
         }
 
@@ -68,15 +69,7 @@ namespace wakeApp.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Create([Bind("Id,UserName,FullName,Email,Password")] User user)
         {
-            string data = JsonConvert.SerializeObject(user);
-            StringContent content = new StringContent(data, Encoding.UTF8, "application/json");
-
-            HttpResponseMessage response = _httpClient.PostAsync(_httpClient.BaseAddress + "Users/Register", content).Result;
-
-            if (response.IsSuccessStatusCode)
-            {
-                return RedirectToAction(nameof(Index));
-            }
+            user = _usersRepository.CreateUser(user);
             return View(user);
         }
 
@@ -89,34 +82,13 @@ namespace wakeApp.Controllers
         [ValidateAntiForgeryToken] 
         public ActionResult Login([Bind("UserName,Password")] UserLogin login )
         {
-            string data =  JsonConvert.SerializeObject(login);
-            StringContent content = new StringContent(data, Encoding.UTF8, "application/json");
+            var userLogin = _usersRepository.LoginUser(login);
 
-            HttpResponseMessage response = _httpClient.PostAsync(_httpClient.BaseAddress + "Users/LoginUser", content).Result;
-
-            if (response.IsSuccessStatusCode)
+            if (userLogin == false)
             {
-                data = response.Content.ReadAsStringAsync().Result;
-                login = JsonConvert.DeserializeObject<UserLogin>(data);
-
-                List<Claim> diretoAcesso = new List<Claim> { 
-                    new Claim(ClaimTypes.NameIdentifier, login.Id.ToString()),
-                    new Claim(ClaimTypes.Name, login.UserName)
-                };
-
-                var identity = new ClaimsIdentity(diretoAcesso, CookieAuthenticationDefaults.AuthenticationScheme);
-                var userMain = new ClaimsPrincipal( identity );
-
-                var authProperties = new AuthenticationProperties
-                {
-                    ExpiresUtc = DateTime.Now.AddHours(8),
-                    IssuedUtc = DateTime.Now
-                };
-
-                var userSession = HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, userMain, authProperties);
-
-                return RedirectToRoute(new { controller = "PostVideos", action = "Index", userSession });
+                return RedirectToRoute(new { controller = "PostVideos", action = "Index"});
             }
+
             return View();
         }
 
@@ -148,26 +120,13 @@ namespace wakeApp.Controllers
                 return NotFound();
             }
 
-            if (ModelState.IsValid)
+            user = _usersRepository.EditUser(id, user);
+
+            if (user == null)
             {
-                try
-                {
-                    _context.Update(user);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!UserExists(user.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction(nameof(Index));
+                return NotFound();
             }
+
             return View(user);
         }
 
@@ -194,9 +153,13 @@ namespace wakeApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var user = await _context.Users.FindAsync(id);
-            _context.Users.Remove(user);
-            await _context.SaveChangesAsync();
+            var user = _usersRepository.DeleteUser(id);
+
+            if (!user)
+            {
+                return BadRequest();
+            }
+
             return RedirectToAction(nameof(Index));
         }
 

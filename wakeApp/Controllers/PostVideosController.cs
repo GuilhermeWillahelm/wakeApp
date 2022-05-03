@@ -15,17 +15,17 @@ namespace wakeApp.Controllers
     {
         private readonly IPostVideoRepository _repository;
         HttpClient _httpClient = new HttpClient() { BaseAddress = new Uri("https://localhost:7099/api/") };
-        private readonly IUserService _userService;
+        private readonly IUsersRepository _usersRepository;
 
-        public PostVideosController(IPostVideoRepository repository, IUserService userService)
+        public PostVideosController(IPostVideoRepository repository, IUsersRepository usersRepository)
         {
             _repository = repository;
-            _userService = userService;
+            _usersRepository = usersRepository;
         }
         // GET: PostVideos
         public IActionResult Index(string? searchString)
         {
-            ViewBag.NameLogin = _userService.GetUserName();
+            ViewBag.NameLogin = _usersRepository.GetUserName();
             var videos = _repository.GetAllVideos(searchString);
             
             return View(videos.ToList());
@@ -34,7 +34,7 @@ namespace wakeApp.Controllers
         // GET: PostVideos/Details/5
         public ActionResult Details(int? id)
         {
-            ViewBag.NameLogin = _userService.GetUserName();
+            ViewBag.NameLogin = _usersRepository.GetUserName();
             var postVideo = _repository.GetPostVideo(id); 
             return View(postVideo);
         }
@@ -42,7 +42,7 @@ namespace wakeApp.Controllers
         // GET: PostVideos/Create
         public IActionResult Create()
         {
-            ViewBag.NameLogin = _userService.GetUserName();
+            ViewBag.NameLogin = _usersRepository.GetUserName();
             return View();
         }
 
@@ -63,7 +63,7 @@ namespace wakeApp.Controllers
         // GET: PostVideos/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
-            ViewBag.NameLogin = _userService.GetUserName();
+            ViewBag.NameLogin = _usersRepository.GetUserName();
             if (id == null)
             {
                 return NotFound();
@@ -99,7 +99,7 @@ namespace wakeApp.Controllers
         // GET: PostVideos/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
-            ViewBag.NameLogin = _userService.GetUserName();
+            ViewBag.NameLogin = _usersRepository.GetUserName();
             if (id == null)
             {
                 return NotFound();
