@@ -19,48 +19,34 @@ namespace wakeApp.Controllers
 {
     public class ChannelsController : Controller
     {
-        private readonly wakeAppContext _context;
         HttpClient _httpClient = new HttpClient() { BaseAddress = new Uri("https://localhost:7099/api/") };
+        private readonly IChannelsRepository _channelsRepository;
         private readonly IUsersRepository _usersRepository;
 
-        public ChannelsController(wakeAppContext context, IUsersRepository usersRepository)
+        public ChannelsController(IChannelsRepository channelsRepository, IUsersRepository usersRepository)
         {
-            _context = context;
+            _channelsRepository = channelsRepository;
             _usersRepository = usersRepository;
         }
 
         // GET: Channels
         public IActionResult Index()
         {
-            List<Channel> channels = new List<Channel>();
-            HttpResponseMessage response = _httpClient.GetAsync(_httpClient.BaseAddress + "Channels").Result;
-
-            if (response.IsSuccessStatusCode)
-            {
-                var data = response.Content.ReadAsStringAsync().Result;
-                channels = JsonConvert.DeserializeObject<List<Channel>>(data);
-            }
-
-            return View(channels.ToList());
+            ViewBag.NameLogin = _usersRepository.GetUserName();
+            var channels = _channelsRepository.GetAllChannels();
+            return View(channels);
         }
 
         // GET: Channels/Details/5
         public IActionResult Details(int? id)
         {
+            @ViewBag.NameLogin = _usersRepository.GetUserName();
             if (id == null)
             {
                 return NotFound();
             }
 
-            Channel channel = new Channel();
-            HttpResponseMessage response = _httpClient.GetAsync(_httpClient.BaseAddress + "Channels/" + id).Result;
-
-            if (response.IsSuccessStatusCode)
-            {
-                var data = response.Content.ReadAsStringAsync().Result;
-                channel = JsonConvert.DeserializeObject<Channel>(data);
-            }
-
+            var channel = _channelsRepository.GetChannelById(id);
 
             if (channel == null)
             {
@@ -78,57 +64,34 @@ namespace wakeApp.Controllers
         }
 
         // POST: Channels/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult Create([Bind("Id,ChannelName,ChannelDescription,CreatedChannel")] Channel channel, [Bind("BannerChannel")] IFormFile BannerChannel)
         {
-            channel.ImageBanner = UploadImage(BannerChannel);
-            channel.UserId = _usersRepository.GetUserId();
-            channel.FollwerId = 0;
-
-            var data = JsonConvert.SerializeObject(channel);
-            StringContent content = new StringContent(data, Encoding.UTF8, "application/json");
-
-            HttpResponseMessage response = _httpClient.PostAsync(_httpClient.BaseAddress + "Channels", content).Result;
-
-            if (response.IsSuccessStatusCode)
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            //ViewData["UserId"] = new SelectList(_context.Users, "Id", "Id", channel.UserId);
+            channel = _channelsRepository.CreateChannel(channel, BannerChannel);
             return View(channel);
         }
 
         // GET: Channels/Edit/5
         public IActionResult Edit(int? id)
         {
+            @ViewBag.NameLogin = _usersRepository.GetUserName();
             if (id == null)
             {
                 return NotFound();
             }
 
-            Channel channel = new Channel();
-            HttpResponseMessage response = _httpClient.GetAsync(_httpClient.BaseAddress + "Channels/" + id).Result;
-
-            if (response.IsSuccessStatusCode)
-            {
-                var data = response.Content.ReadAsStringAsync().Result;
-                channel = JsonConvert.DeserializeObject<Channel>(data);
-            }
+            var channel = _channelsRepository.GetChannelById(id);
 
             if (channel == null)
             {
                 return NotFound();
             }
-            //ViewData["UserId"] = new SelectList(_context.Users, "Id", "Id", channel.UserId);
+
             return View(channel);
         }
 
         // POST: Channels/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult Edit(int id, [Bind("Id,ChannelName,ChannelDescription")] Channel channel, [Bind("BannerImage")] IFormFile BannerImage)
@@ -138,16 +101,11 @@ namespace wakeApp.Controllers
                 return NotFound();
             }
 
-            channel.ImageBanner = UploadImage(BannerImage);
-            channel.UserId = _usersRepository.GetUserId();
+            channel = _channelsRepository.EditChannel(id, channel, BannerImage);
 
-            var data = JsonConvert.SerializeObject(channel);
-            StringContent content = new StringContent(data, Encoding.UTF8, "application/json");
-
-            HttpResponseMessage response = _httpClient.PutAsync(_httpClient.BaseAddress + "Channels", content).Result;
-            if (response.IsSuccessStatusCode)
+            if (channel == null)
             {
-                return RedirectToAction(nameof(Index));
+                return BadRequest();
             }
 
             return View(channel);
@@ -156,19 +114,13 @@ namespace wakeApp.Controllers
         // GET: Channels/Delete/5
         public IActionResult Delete(int? id)
         {
+            @ViewBag.NameLogin = _usersRepository.GetUserName();
             if (id == null)
             {
                 return NotFound();
             }
 
-            Channel channel = new Channel();
-            HttpResponseMessage response = _httpClient.DeleteAsync(_httpClient.BaseAddress + "Channels/" + id).Result;
-
-            if(response.IsSuccessStatusCode)
-            {
-                var data = response.Content.ReadAsStringAsync().Result;
-                channel = JsonConvert.DeserializeObject<Channel>(data);
-            }
+            var channel = _channelsRepository.GetChannelById(id);
 
             if (channel == null)
             {
@@ -183,40 +135,14 @@ namespace wakeApp.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult DeleteConfirmed(int id)
         {
-            HttpResponseMessage response = _httpClient.DeleteAsync(_httpClient.BaseAddress + "Channels/" + id).Result;
+            var channelReturn = _channelsRepository.DeleteChannel(id);
 
-            if(response.IsSuccessStatusCode)
+            if(channelReturn == false)
             {
-                return RedirectToAction(nameof(Index));
+                return BadRequest();
             }
 
             return RedirectToAction(nameof(Index));
         }
-
-        private bool ChannelExists(int id)
-        {
-            return _context.Channels.Any(e => e.Id == id);
-        }
-
-        private string UploadImage(IFormFile file)
-        {
-            Account account = new Account("imagedpy", "882864429614789", "J0ISV-xrcX_pod7fhdyLSJ06Gl4");
-            Cloudinary cloudinary = new Cloudinary(account);
-            var filename = file.FileName;
-
-            var uploadParams = new ImageUploadParams()
-            {
-                File = new FileDescription($@"D:/Computador/Images/Desenhos/{filename}"),
-                PublicId = filename.Replace("D:/Computador/Images/Desenhos/", "").Replace(".jpg", ""),
-                UploadPreset = "h2necen7",
-                Folder = "thumbnails",
-                ImageMetadata = true,
-
-            };
-            var uploadResult = cloudinary.Upload(uploadParams);
-
-            return uploadResult.SecureUrl.OriginalString;
-        }
-
     }
 }
