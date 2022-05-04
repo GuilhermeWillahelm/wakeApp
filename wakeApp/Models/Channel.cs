@@ -14,6 +14,5 @@ namespace wakeApp.Models
         public virtual User? User { get; set; }
         public int FollwerId { get; set; }
         public virtual Follower? Follower { get; set; }
-
     }
 }

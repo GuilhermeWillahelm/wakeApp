@@ -1,12 +1,9 @@
-﻿@model IEnumerable<wakeApp.Models.PostVideo>
+﻿@using wakeApp.Models
+@model IEnumerable<PostVideo>
 
 @{
     ViewData["Title"] = "Index";
 }
-
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
 
 @foreach (var item in Model)
 {

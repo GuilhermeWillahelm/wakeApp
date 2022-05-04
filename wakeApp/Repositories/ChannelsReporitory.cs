@@ -14,6 +14,7 @@ namespace wakeApp.Repositories
         public ChannelsReporitory(IUsersRepository usersRepository, IUploadService uploadService)
         {
             _usersRepository = usersRepository;
+            
             _uploadService = uploadService;
         }
 
@@ -31,10 +32,11 @@ namespace wakeApp.Repositories
             return channels;
         }
 
-        public Channel GetChannelById(int? id)
+        public ComponentViewModel GetChannelById(int? id)
         {
+            ComponentViewModel componentView = new ComponentViewModel();
             Channel channel = new Channel();
-            HttpResponseMessage response = _httpClient.GetAsync(_httpClient.BaseAddress + "Channels/" + id).Result;
+            HttpResponseMessage response = _httpClient.GetAsync(_httpClient.BaseAddress + "Channels/GetChannelByUser/" + id).Result;
 
             if (response.IsSuccessStatusCode)
             {
@@ -42,7 +44,9 @@ namespace wakeApp.Repositories
                 channel = JsonConvert.DeserializeObject<Channel>(data);
             }
 
-            return channel;
+            componentView.channelCP = channel;
+
+            return componentView;
         }
 
         public Channel CreateChannel(Channel channel, IFormFile fileBanner)

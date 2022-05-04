@@ -1,0 +1,18 @@
+﻿@using wakeApp.Models
+@model IEnumerable<ComponentViewModel>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+@foreach (var item in Model)
+{
+    <div class="card d-inline-block" style="width: 19rem; margin: 8px;">
+        <a asp-action="Details" asp-route-id="@item.postVideoCp.Id">
+            <img src="@Html.DisplayFor(modelItem => item.postVideoCp.ThumbImage)" class="card-img-top" alt="...">
+            <div class="card-body">
+                <p class="card-text">@Html.DisplayFor(modelItem => item.postVideoCp.Title)</p>
+            </div>
+        </a>
+    </div>
+}

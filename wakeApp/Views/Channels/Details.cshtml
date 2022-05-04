@@ -1,54 +1,58 @@
-﻿@model wakeApp.Models.Channel
+﻿@using wakeApp.Models
+@model ComponentViewModel
 
 @{
     ViewData["Title"] = "Details";
 }
 
-<h1>Details</h1>
+<div>
+    <div class="menu-channel">
+        <div class="carousel slide" data-bs-ride="carousel">
+            <div class="carousel-inner">
+                <div class="carousel-item active" style="height:250px;">
+                    <img src="@Html.DisplayFor(model => model.channelCP.ImageBanner)" class="d-block w-100" alt="...">
+                    <div class="carousel-caption d-none d-md-block">
+                        <h5>@Html.DisplayFor(model => model.channelCP.ChannelName)</h5>
+                        <p>@Html.DisplayFor(model => model.channelCP.ChannelDescription)</p>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-<div>
-    <h4>Channel</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.ChannelName)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.ChannelName)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.ChannelDescription)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.ChannelDescription)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.CreatedChannel)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.CreatedChannel)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.ImageBanner)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.ImageBanner)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.User)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.User.Id)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.FollwerId)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.FollwerId)
-        </dd>
-    </dl>
+        <div class="sub-menu-channel card-body" style="background-color: #131313;">
+            <nav class="navbar navbar-expand-lg">
+                <div class="container-fluid">
+                    <h5 class="card-title">@Html.DisplayFor(model => model.channelCP.ChannelName)</h5>
+                    <a class="btn btn-primary d-flex" asp-action="Edit" asp-route-id="@Model.channelCP.Id">Customize Channel</a>
+                </div>
+            </nav>
+            <nav class="navbar navbar-expand-lg">
+                <div class="container-fluid">
+                    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                        <ul class="navbar-nav me-auto mb-2 mb-lg-0 nav-channel">
+                            <li class="nav-item">
+                                <a class="nav-channel-link active" aria-current="page" href="#">Videos</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-channel-link" href="#">Playlist</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-channel-link" href="#">About</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-channel-link" href="#">Community</a>
+                            </li>
+                        </ul>
+                        <form class="d-flex">
+                            <input class="form-control me-2 bg-dark" type="search" placeholder="Search" aria-label="Search">
+                            <button class="btn btn-dark btn-outline-info" type="submit"><i class="fa-brands fa-searchengin"></i></button>
+                        </form>
+                    </div>
+                </div>
+            </nav>
+        </div>
+    </div>
+
+    <!--<partial name="../Channels/Videos.cshtml" view-data="ViewData" />-->
 </div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model?.Id">Edit</a> |
-    <a asp-action="Index">Back to List</a>
-</div>
+

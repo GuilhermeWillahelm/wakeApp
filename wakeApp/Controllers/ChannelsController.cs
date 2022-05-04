@@ -21,11 +21,13 @@ namespace wakeApp.Controllers
     {
         HttpClient _httpClient = new HttpClient() { BaseAddress = new Uri("https://localhost:7099/api/") };
         private readonly IChannelsRepository _channelsRepository;
+        private readonly IPostVideoRepository _postVideoRepository;
         private readonly IUsersRepository _usersRepository;
 
-        public ChannelsController(IChannelsRepository channelsRepository, IUsersRepository usersRepository)
+        public ChannelsController(IChannelsRepository channelsRepository, IPostVideoRepository postVideoRepository, IUsersRepository usersRepository)
         {
             _channelsRepository = channelsRepository;
+            _postVideoRepository = postVideoRepository;
             _usersRepository = usersRepository;
         }
 
@@ -33,6 +35,7 @@ namespace wakeApp.Controllers
         public IActionResult Index()
         {
             ViewBag.NameLogin = _usersRepository.GetUserName();
+            ViewBag.UseID = _usersRepository.GetUserId();
             var channels = _channelsRepository.GetAllChannels();
             return View(channels);
         }
@@ -40,12 +43,14 @@ namespace wakeApp.Controllers
         // GET: Channels/Details/5
         public IActionResult Details(int? id)
         {
-            @ViewBag.NameLogin = _usersRepository.GetUserName();
+            ViewBag.NameLogin = _usersRepository.GetUserName();
+            ViewBag.UseID = _usersRepository.GetUserId();
+
             if (id == null)
             {
                 return NotFound();
             }
-
+            
             var channel = _channelsRepository.GetChannelById(id);
 
             if (channel == null)
@@ -56,10 +61,29 @@ namespace wakeApp.Controllers
             return View(channel);
         }
 
+        public IActionResult Videos()
+        {
+            var id = _usersRepository.GetUserId();
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var videos = _postVideoRepository.GetAllVideosPerChannel(id);
+
+            if (videos == null)
+            {
+                return NotFound();
+            }
+
+            return View(videos.ToList());
+        }
+
         // GET: Channels/Create
         public IActionResult Create()
         {
-            @ViewBag.NameLogin = _usersRepository.GetUserName();
+            ViewBag.NameLogin = _usersRepository.GetUserName();
+            ViewBag.UseID = _usersRepository.GetUserId();
             return View();
         }
 
@@ -75,7 +99,8 @@ namespace wakeApp.Controllers
         // GET: Channels/Edit/5
         public IActionResult Edit(int? id)
         {
-            @ViewBag.NameLogin = _usersRepository.GetUserName();
+            ViewBag.NameLogin = _usersRepository.GetUserName();
+            ViewBag.UseID = _usersRepository.GetUserId();
             if (id == null)
             {
                 return NotFound();
@@ -114,7 +139,8 @@ namespace wakeApp.Controllers
         // GET: Channels/Delete/5
         public IActionResult Delete(int? id)
         {
-            @ViewBag.NameLogin = _usersRepository.GetUserName();
+            ViewBag.NameLogin = _usersRepository.GetUserName();
+            ViewBag.UseID = _usersRepository.GetUserId();
             if (id == null)
             {
                 return NotFound();

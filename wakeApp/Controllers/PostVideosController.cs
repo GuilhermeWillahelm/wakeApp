@@ -26,6 +26,7 @@ namespace wakeApp.Controllers
         public IActionResult Index(string? searchString)
         {
             ViewBag.NameLogin = _usersRepository.GetUserName();
+            ViewBag.UseID = _usersRepository.GetUserId();
             var videos = _repository.GetAllVideos(searchString);
             
             return View(videos.ToList());
@@ -35,7 +36,9 @@ namespace wakeApp.Controllers
         public ActionResult Details(int? id)
         {
             ViewBag.NameLogin = _usersRepository.GetUserName();
+            ViewBag.UseID = _usersRepository.GetUserId();
             var postVideo = _repository.GetPostVideo(id); 
+
             return View(postVideo);
         }
 
@@ -43,6 +46,7 @@ namespace wakeApp.Controllers
         public IActionResult Create()
         {
             ViewBag.NameLogin = _usersRepository.GetUserName();
+            ViewBag.UseID = _usersRepository.GetUserId();
             return View();
         }
 
@@ -64,6 +68,7 @@ namespace wakeApp.Controllers
         public async Task<IActionResult> Edit(int? id)
         {
             ViewBag.NameLogin = _usersRepository.GetUserName();
+            ViewBag.UseID = _usersRepository.GetUserId();
             if (id == null)
             {
                 return NotFound();

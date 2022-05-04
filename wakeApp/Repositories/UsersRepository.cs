@@ -13,14 +13,33 @@ namespace wakeApp.Repositories
         HttpClient _httpClient = new HttpClient() { BaseAddress = new Uri("https://localhost:7099/api/") };
         private readonly IHttpContextAccessor _context;
 
-        public UsersRepository( IHttpContextAccessor context)
+        public UsersRepository(IHttpContextAccessor context)
         {
             _context = context;
         }
 
-        public User GetUserById(int id)
+        public User GetUserById(int? id)
         {
-            throw new NotImplementedException();
+            if (id == null)
+            {
+                return null;
+            }
+
+            User user = new User();
+            HttpResponseMessage response = _httpClient.GetAsync(_httpClient.BaseAddress + "Users/" + id).Result;
+
+            if (response.IsSuccessStatusCode)
+            {
+                var data = response.Content.ReadAsStringAsync().Result;
+                user = JsonConvert.DeserializeObject<User>(data);
+            }
+
+            if (user == null)
+            {
+                return null;
+            }
+
+            return user;
         }
 
         public User CreateUser(User user)
@@ -102,7 +121,17 @@ namespace wakeApp.Repositories
         public int GetUserId()
         {
             var user = _context.HttpContext.User.Claims.Where(u => u.Type == ClaimTypes.NameIdentifier).Select(x => x.Value);
-            int idUser = int.Parse(user.Last());
+
+            int idUser;
+
+            if (user == null)
+            {
+                idUser = 0;
+            }
+            else
+            {
+                idUser = int.Parse(user.Last());
+            }
 
             return idUser;
         }
@@ -110,7 +139,24 @@ namespace wakeApp.Repositories
         public string GetUserName()
         {
             var user = _context.HttpContext.User.Claims.Where(u => u.Type == ClaimTypes.Name).Select(x => x.Value);
-            return user.Last();
+            string userName = "";
+            try
+            {
+                userName = user.Last();
+
+                return userName;
+            }
+            catch(Exception ex)
+            {
+                userName = "";
+            }
+
+            return userName;
+        }
+
+        public void Logoff()
+        {
+            _context.HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
         }
     }
 }

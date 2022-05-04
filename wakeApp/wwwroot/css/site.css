@@ -13,9 +13,34 @@ html {
     min-height: 100%;
 }
 
+h4 {
+    color: white;
+}
+
 body {
     margin-bottom: 60px;
     background-color: #000c14;
+}
+
+.menu-channel {
+    border: solid 5px;
+    border-radius: 10px;
+}
+
+.carousel-item img {
+    border-radius: 5px;
+}
+
+.sub-menu-channel {
+    border-radius: 5px;
+}
+
+.nav-channel-link {
+    margin: 0px 40px 0px 20px;
+    text-align: center;
+    vertical-align: central;
+    color: white;
+    text-decoration: none;
 }
 
 .card {

@@ -34,19 +34,21 @@ namespace wakeApp.Controllers
         public IActionResult Index()
         {
             ViewBag.NameLogin = _usersRepository.GetUserName();
+            ViewBag.UseID = _usersRepository.GetUserId();
             return RedirectToRoute(new { controller = "PostVideos", action = "Index"});
         }
 
         // GET: Users/Details/5
         public async Task<IActionResult> Details(int? id)
         {
+            ViewBag.NameLogin = _usersRepository.GetUserName();
+            ViewBag.UseID = _usersRepository.GetUserId();
             if (id == null)
             {
                 return NotFound();
             }
 
-            var user = await _context.Users
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var user = _usersRepository.GetUserById(id);
             if (user == null)
             {
                 return NotFound();
@@ -59,6 +61,7 @@ namespace wakeApp.Controllers
         public IActionResult Create()
         {
             ViewBag.NameLogin = _usersRepository.GetUserName();
+            ViewBag.UseID = _usersRepository.GetUserId();
             return View();
         }
 
@@ -95,6 +98,8 @@ namespace wakeApp.Controllers
         // GET: Users/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
+            ViewBag.NameLogin = _usersRepository.GetUserName();
+            ViewBag.UseID = _usersRepository.GetUserId();
             if (id == null)
             {
                 return NotFound();
@@ -130,9 +135,18 @@ namespace wakeApp.Controllers
             return View(user);
         }
 
+        [Authorize]
+        public IActionResult Logoff()
+        {
+            _usersRepository.Logoff();
+            return RedirectToRoute(new { controller = "PostVideos", action = "Index" });
+        }
+
         // GET: Users/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
+            ViewBag.NameLogin = _usersRepository.GetUserName();
+            ViewBag.UseID = _usersRepository.GetUserId();
             if (id == null)
             {
                 return NotFound();
