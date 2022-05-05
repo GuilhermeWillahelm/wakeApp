@@ -1,5 +1,5 @@
 ﻿@using wakeApp.Models
-@model ComponentViewModel
+@model Channel
 
 @{
     ViewData["Title"] = "Details";
@@ -10,10 +10,10 @@
         <div class="carousel slide" data-bs-ride="carousel">
             <div class="carousel-inner">
                 <div class="carousel-item active" style="height:250px;">
-                    <img src="@Html.DisplayFor(model => model.channelCP.ImageBanner)" class="d-block w-100" alt="...">
+                    <img src="@Html.DisplayFor(model => model.ImageBanner)" class="d-block w-100" alt="...">
                     <div class="carousel-caption d-none d-md-block">
-                        <h5>@Html.DisplayFor(model => model.channelCP.ChannelName)</h5>
-                        <p>@Html.DisplayFor(model => model.channelCP.ChannelDescription)</p>
+                        <h5>@Html.DisplayFor(model => model.ChannelName)</h5>
+                        <p>@Html.DisplayFor(model => model.ChannelDescription)</p>
                     </div>
                 </div>
             </div>
@@ -22,25 +22,25 @@
         <div class="sub-menu-channel card-body" style="background-color: #131313;">
             <nav class="navbar navbar-expand-lg">
                 <div class="container-fluid">
-                    <h5 class="card-title">@Html.DisplayFor(model => model.channelCP.ChannelName)</h5>
-                    <a class="btn btn-primary d-flex" asp-action="Edit" asp-route-id="@Model.channelCP.Id">Customize Channel</a>
+                    <h5 class="card-title">@Html.DisplayFor(model => model.ChannelName)</h5>
+                    <a class="btn btn-primary d-flex" asp-action="Edit" asp-route-id="@Model.Id">Customize Channel</a>
                 </div>
             </nav>
             <nav class="navbar navbar-expand-lg">
                 <div class="container-fluid">
                     <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                        <ul class="navbar-nav me-auto mb-2 mb-lg-0 nav-channel">
+                        <ul class="nav navbar-nav nav-pills me-auto mb-2 mb-lg-0 nav-channel" id="pills-tab" role="tablist">
                             <li class="nav-item">
-                                <a class="nav-channel-link active" aria-current="page" href="#">Videos</a>
+                                <a class="nav-channel-link active" id="pills-videos-tab" data-bs-toggle="pill" data-bs-target="#pills-videos" role="tab">Videos</a>
                             </li>
                             <li class="nav-item">
                                 <a class="nav-channel-link" href="#">Playlist</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-channel-link" href="#">About</a>
+                                <a class="nav-channel-link" id="pills-about-tab" data-bs-toggle="pill" data-bs-target="#pills-about" role="tab">About</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-channel-link" href="#">Community</a>
+                                <a class="nav-channel-link" id="pills-community-tab" data-bs-toggle="pill" data-bs-target="#pills-community" role="tab">Community</a>
                             </li>
                         </ul>
                         <form class="d-flex">
@@ -53,6 +53,38 @@
         </div>
     </div>
 
-    <!--<partial name="../Channels/Videos.cshtml" view-data="ViewData" />-->
+    <div class="tab-content" id="pills-tabContent" style="margin: 20px;">
+        <div class="tab-pane fade show active" id="pills-videos" role="tabpanel" aria-labelledby="pills-videos-tab">
+            @foreach (var item in Model.Videos)
+            {
+                <div class="card d-inline-block" style="width: 18rem; margin: 6px;">
+                    <a asp-controller="PostVideos" asp-action="Details" asp-route-id="@item.Id">
+                        <img src="@Html.DisplayFor(modelItem => item.ThumbImage)" class="card-img-top" alt="...">
+                        <div class="card-body">
+                            <p class="card-text">@Html.DisplayFor(modelItem => item.Title)</p>
+                        </div>
+                    </a>
+                </div>
+            }
+        </div>
+
+        <div class="tab-pane fade" id="pills-about" role="tabpanel" aria-labelledby="pills-profile-tab">
+            <h4>@Html.DisplayFor(model => model.ChannelDescription)</h4>
+        </div>
+
+        <div class="tab-pane fade" id="pills-community" role="tabpanel" aria-labelledby="pills-community-tab">
+            <h4>Comments</h4>
+            <form>
+                <div class="row mb-3">
+                    <div class="col-sm-6">
+                        <input type="email" class="form-control" id="inputEmail3">
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-primary">Post</button>
+            </form>
+        </div>
+    </div>
+
 </div>
 

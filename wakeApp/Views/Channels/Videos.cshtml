@@ -1,18 +1,18 @@
 ﻿@using wakeApp.Models
-@model IEnumerable<ComponentViewModel>
+@model Channel
 
 @{
     ViewData["Title"] = "Index";
 }
 
-@foreach (var item in Model)
-{
-    <div class="card d-inline-block" style="width: 19rem; margin: 8px;">
-        <a asp-action="Details" asp-route-id="@item.postVideoCp.Id">
-            <img src="@Html.DisplayFor(modelItem => item.postVideoCp.ThumbImage)" class="card-img-top" alt="...">
-            <div class="card-body">
-                <p class="card-text">@Html.DisplayFor(modelItem => item.postVideoCp.Title)</p>
-            </div>
-        </a>
-    </div>
-}
+@foreach (var item in Model.Videos)
+            {
+                <div class="card d-inline-block" style="width: 19rem; margin: 8px;">
+                    <a asp-controller="PostVideos" asp-action="Details" asp-route-id="@item.Id">
+                        <img src="@Html.DisplayFor(modelItem => item.ThumbImage)" class="card-img-top" alt="...">
+                        <div class="card-body">
+                            <p class="card-text">@Html.DisplayFor(modelItem => item.Title)</p>
+                        </div>
+                    </a>
+                </div>
+            }

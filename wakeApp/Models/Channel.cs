@@ -14,5 +14,6 @@ namespace wakeApp.Models
         public virtual User? User { get; set; }
         public int FollwerId { get; set; }
         public virtual Follower? Follower { get; set; }
+        public virtual List<PostVideo> Videos { get; set; } = new List<PostVideo>();
     }
 }

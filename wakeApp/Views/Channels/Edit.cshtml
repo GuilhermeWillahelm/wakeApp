@@ -24,24 +24,9 @@
                 <span asp-validation-for="ChannelDescription" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="CreatedChannel" class="control-label"></label>
-                <input asp-for="CreatedChannel" class="form-control" />
-                <span asp-validation-for="CreatedChannel" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="ImageBanner" class="control-label"></label>
-                <input asp-for="ImageBanner" class="form-control" />
-                <span asp-validation-for="ImageBanner" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="UserId" class="control-label"></label>
-                <select asp-for="UserId" class="form-control" asp-items="ViewBag.UserId"></select>
-                <span asp-validation-for="UserId" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="FollwerId" class="control-label"></label>
-                <input asp-for="FollwerId" class="form-control" />
-                <span asp-validation-for="FollwerId" class="text-danger"></span>
+                <label for="BannerChannel" class="control-label"></label>
+                <input name="BannerChannel" type="file" class="form-control" />
+                <span for="BannerChannel" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <input type="submit" value="Save" class="btn btn-primary" />

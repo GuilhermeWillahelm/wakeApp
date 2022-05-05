@@ -32,9 +32,8 @@ namespace wakeApp.Repositories
             return channels;
         }
 
-        public ComponentViewModel GetChannelById(int? id)
+        public Channel GetChannelById(int? id)
         {
-            ComponentViewModel componentView = new ComponentViewModel();
             Channel channel = new Channel();
             HttpResponseMessage response = _httpClient.GetAsync(_httpClient.BaseAddress + "Channels/GetChannelByUser/" + id).Result;
 
@@ -44,9 +43,8 @@ namespace wakeApp.Repositories
                 channel = JsonConvert.DeserializeObject<Channel>(data);
             }
 
-            componentView.channelCP = channel;
 
-            return componentView;
+            return channel;
         }
 
         public Channel CreateChannel(Channel channel, IFormFile fileBanner)

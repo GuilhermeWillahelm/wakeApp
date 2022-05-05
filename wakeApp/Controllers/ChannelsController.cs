@@ -50,8 +50,9 @@ namespace wakeApp.Controllers
             {
                 return NotFound();
             }
-            
-            var channel = _channelsRepository.GetChannelById(id);
+            Channel channel = new Channel();
+            channel = _channelsRepository.GetChannelById(id);
+            channel.Videos = _postVideoRepository.GetAllVideosPerChannel(id);
 
             if (channel == null)
             {
@@ -68,15 +69,15 @@ namespace wakeApp.Controllers
             {
                 return NotFound();
             }
+            List<PostVideo> posts = new List<PostVideo>();
+            posts = _postVideoRepository.GetAllVideosPerChannel(id);
 
-            var videos = _postVideoRepository.GetAllVideosPerChannel(id);
-
-            if (videos == null)
+            if (posts == null)
             {
                 return NotFound();
             }
 
-            return View(videos.ToList());
+            return View(posts);
         }
 
         // GET: Channels/Create
@@ -97,10 +98,11 @@ namespace wakeApp.Controllers
         }
 
         // GET: Channels/Edit/5
-        public IActionResult Edit(int? id)
+        public IActionResult Edit()
         {
             ViewBag.NameLogin = _usersRepository.GetUserName();
             ViewBag.UseID = _usersRepository.GetUserId();
+            var id = _usersRepository.GetUserId();
             if (id == null)
             {
                 return NotFound();
@@ -163,7 +165,7 @@ namespace wakeApp.Controllers
         {
             var channelReturn = _channelsRepository.DeleteChannel(id);
 
-            if(channelReturn == false)
+            if (channelReturn == false)
             {
                 return BadRequest();
             }

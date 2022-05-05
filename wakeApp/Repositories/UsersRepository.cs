@@ -121,16 +121,22 @@ namespace wakeApp.Repositories
         public int GetUserId()
         {
             var user = _context.HttpContext.User.Claims.Where(u => u.Type == ClaimTypes.NameIdentifier).Select(x => x.Value);
-
             int idUser;
 
-            if (user == null)
+            try
+            {
+                if (user == null)
+                {
+                    idUser = 0;
+                }
+                else
+                {
+                    idUser = int.Parse(user.Last());
+                }
+            }
+            catch (Exception ex)
             {
                 idUser = 0;
-            }
-            else
-            {
-                idUser = int.Parse(user.Last());
             }
 
             return idUser;
