@@ -6,7 +6,7 @@ namespace wakeApp.Repositories
     {
         List<Channel> GetAllChannels();
         Channel GetChannelById(int? id);
-        Channel CreateChannel(Channel channel, IFormFile fileBanner);
+        Channel CreateChannel(Channel channel, IFormFile fileBanner, IFormFile fileIcon);
         Channel EditChannel(int id, Channel channel, IFormFile fileBanner);
         bool DeleteChannel(int id);
     }

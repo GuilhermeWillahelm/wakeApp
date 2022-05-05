@@ -18,6 +18,11 @@
                 <span asp-validation-for="ChannelName" class="text-danger"></span>
             </div>
             <div class="form-group">
+                <label asp-for="SubtitleChannel" class="control-label"></label>
+                <input asp-for="SubtitleChannel" class="form-control" />
+                <span asp-validation-for="SubtitleChannel" class="text-danger"></span>
+            </div>
+            <div class="form-group">
                 <label asp-for="ChannelDescription" class="control-label"></label>
                 <input asp-for="ChannelDescription" class="form-control" />
                 <span asp-validation-for="ChannelDescription" class="text-danger"></span>
@@ -26,6 +31,11 @@
                 <label for="BannerChannel" class="control-label"></label>
                 <input name="BannerChannel" type="file" class="form-control" />
                 <span for="BannerChannel" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label for="ChannelIcon" class="control-label"></label>
+                <input name="ChannelIcon" type="file" class="form-control" />
+                <span for="ChannelIcon" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <input type="submit" value="Create" class="btn btn-primary" />

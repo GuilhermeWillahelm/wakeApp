@@ -54,9 +54,9 @@ namespace wakeApp.Controllers
             channel = _channelsRepository.GetChannelById(id);
             channel.Videos = _postVideoRepository.GetAllVideosPerChannel(id);
 
-            if (channel == null)
+            if (channel.ChannelName == "")
             {
-                return NotFound();
+                return RedirectToAction(nameof(Create));
             }
 
             return View(channel);
@@ -91,10 +91,10 @@ namespace wakeApp.Controllers
         // POST: Channels/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Create([Bind("Id,ChannelName,ChannelDescription,CreatedChannel")] Channel channel, [Bind("BannerChannel")] IFormFile BannerChannel)
+        public IActionResult Create([Bind("Id,ChannelName,SubtitleChannel,ChannelDescription,CreatedChannel")] Channel channel, [Bind("BannerChannel")] IFormFile BannerChannel, [Bind("ChannelIcon")] IFormFile ChannelIcon)
         {
-            channel = _channelsRepository.CreateChannel(channel, BannerChannel);
-            return View(channel);
+            channel = _channelsRepository.CreateChannel(channel, BannerChannel, ChannelIcon);
+            return RedirectToAction(nameof(Details));
         }
 
         // GET: Channels/Edit/5

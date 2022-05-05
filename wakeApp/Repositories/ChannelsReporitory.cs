@@ -47,11 +47,11 @@ namespace wakeApp.Repositories
             return channel;
         }
 
-        public Channel CreateChannel(Channel channel, IFormFile fileBanner)
+        public Channel CreateChannel(Channel channel, IFormFile fileBanner, IFormFile fileIcon)
         {
             channel.ImageBanner = _uploadService.UploadImage(fileBanner);
+            channel.IconChannel = _uploadService.UploadImage(fileIcon);
             channel.UserId = _usersRepository.GetUserId();
-            channel.FollwerId = 0;
 
             var data = JsonConvert.SerializeObject(channel);
             StringContent content = new StringContent(data, Encoding.UTF8, "application/json");
