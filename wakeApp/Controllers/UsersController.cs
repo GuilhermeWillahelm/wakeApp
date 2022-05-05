@@ -105,7 +105,7 @@ namespace wakeApp.Controllers
                 return NotFound();
             }
 
-            var user = await _context.Users.FindAsync(id);
+            var user = _usersRepository.GetUserById(id);
             if (user == null)
             {
                 return NotFound();

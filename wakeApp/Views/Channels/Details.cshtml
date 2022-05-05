@@ -34,7 +34,7 @@
                                 <a class="nav-channel-link active" id="pills-videos-tab" data-bs-toggle="pill" data-bs-target="#pills-videos" role="tab">Videos</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-channel-link" href="#">Playlist</a>
+                                <a class="nav-channel-link" id="pills-playlist-tab" data-bs-toggle="pill" data-bs-target="#pills-playlist" role="tab">Playlist</a>
                             </li>
                             <li class="nav-item">
                                 <a class="nav-channel-link" id="pills-about-tab" data-bs-toggle="pill" data-bs-target="#pills-about" role="tab">About</a>
@@ -55,20 +55,14 @@
 
     <div class="tab-content" id="pills-tabContent" style="margin: 20px;">
         <div class="tab-pane fade show active" id="pills-videos" role="tabpanel" aria-labelledby="pills-videos-tab">
-            @foreach (var item in Model.Videos)
-            {
-                <div class="card d-inline-block" style="width: 18rem; margin: 6px;">
-                    <a asp-controller="PostVideos" asp-action="Details" asp-route-id="@item.Id">
-                        <img src="@Html.DisplayFor(modelItem => item.ThumbImage)" class="card-img-top" alt="...">
-                        <div class="card-body">
-                            <p class="card-text">@Html.DisplayFor(modelItem => item.Title)</p>
-                        </div>
-                    </a>
-                </div>
-            }
+            <partial name="../Channels/Videos.cshtml" view-data="ViewData" />
         </div>
 
-        <div class="tab-pane fade" id="pills-about" role="tabpanel" aria-labelledby="pills-profile-tab">
+        <div class="tab-pane fade" id="pills-playlist" role="tabpanel" aria-labelledby="pills-about-tab">
+            <h4>Ainda sem playlist</h4>
+        </div>
+
+        <div class="tab-pane fade" id="pills-about" role="tabpanel" aria-labelledby="pills-about-tab">
             <h4>@Html.DisplayFor(model => model.ChannelDescription)</h4>
         </div>
 
