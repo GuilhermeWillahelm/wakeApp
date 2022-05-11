@@ -139,5 +139,56 @@ namespace wakeApp.Repositories
 
             return postVideos;
         }
+
+        public List<Like> GetLikesPerVideos(int? idLike, int? idVideo)
+        {
+            if(idLike == null && idVideo == null)
+            {
+                return null;
+            }
+
+            List<Like> likes = new List<Like>();
+            HttpResponseMessage response = _httpClient.GetAsync(_httpClient.BaseAddress + "" + idLike).Result;
+
+            if (response.IsSuccessStatusCode)
+            {
+                var data = response.Content.ReadAsStringAsync().Result;
+                likes = JsonConvert.DeserializeObject<List<Like>>(data);
+            }
+
+            if(likes == null)
+            {
+                return null;
+            }
+
+            return likes;
+        }
+
+        public Like AddLike(int idVideo, Like like)
+        {
+            if(like == null)
+            {
+                return null;
+            }
+
+            like.UserId = _usersRepository.GetUserId();
+            string data = JsonConvert.SerializeObject(like);
+
+            StringContent content = new StringContent(data, Encoding.UTF8, "application/json");
+
+            HttpResponseMessage response = _httpClient.PostAsync(_httpClient.BaseAddress + "Like/", content).Result;
+            if (response.IsSuccessStatusCode)
+            {
+                return null;
+            }
+
+            return like;
+
+        }
+
+        public Like UpdateLike(int? idLike, int? idVideo, Like like)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
