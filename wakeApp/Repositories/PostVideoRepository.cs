@@ -20,19 +20,27 @@ namespace wakeApp.Repositories
         public List<PostVideo> GetAllVideos(string? searchString)
         {
             List<PostVideo> videos = new List<PostVideo>();
-            HttpResponseMessage response = _httpClient.GetAsync(_httpClient.BaseAddress + "PostVideos").Result;
-
-            if (!String.IsNullOrEmpty(searchString))
+            try
             {
-                response = _httpClient.GetAsync(_httpClient.BaseAddress + "PostVideos?searchString=" + searchString).Result;
-            }
+                HttpResponseMessage response = _httpClient.GetAsync(_httpClient.BaseAddress + "PostVideos").Result;
 
-            if (response.IsSuccessStatusCode)
+                if (!String.IsNullOrEmpty(searchString))
+                {
+                    response = _httpClient.GetAsync(_httpClient.BaseAddress + "PostVideos?searchString=" + searchString).Result;
+                }
+
+                if (response.IsSuccessStatusCode)
+                {
+                    var data = response.Content.ReadAsStringAsync().Result;
+                    videos = JsonConvert.DeserializeObject<List<PostVideo>>(data);
+                }
+
+                return videos;
+            }
+            catch (Exception ex)
             {
-                var data = response.Content.ReadAsStringAsync().Result;
-                videos = JsonConvert.DeserializeObject<List<PostVideo>>(data);
+                return null;
             }
-
             return videos;
         }
 
@@ -164,7 +172,7 @@ namespace wakeApp.Repositories
             return likes;
         }
 
-        public Like AddLike(int idVideo, Like like)
+        public Like AddLike(Like like)
         {
             if(like == null)
             {

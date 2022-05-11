@@ -8,6 +8,6 @@
         public int UserId { get; set; }
         public virtual User? User { get; set; }
         public int PostVideoId { get; set; }
-        public virtual PostVideo? PostVideo { get; set; }
+        public virtual PostVideo? PostVideo { get; set; } = new PostVideo();
     }
 }

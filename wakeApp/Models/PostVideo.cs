@@ -14,6 +14,6 @@ namespace wakeApp.Models
         public string ThumbImage { get; set; } = string.Empty;
         public int UserId { get; set; }
         public virtual User? User { get; set; }
-        public virtual Like? Like { get; set; } = new Like();
+        //public virtual Like? Like { get; set; } = new Like();
     }
 }

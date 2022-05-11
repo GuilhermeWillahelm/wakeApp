@@ -28,6 +28,11 @@ namespace wakeApp.Controllers
             ViewBag.NameLogin = _usersRepository.GetUserName();
             ViewBag.UseID = _usersRepository.GetUserId();
             var videos = _repository.GetAllVideos(searchString);
+
+            if(videos == null)
+            {
+                return View("Error");
+            }
             
             return View(videos.ToList());
         }
@@ -61,7 +66,21 @@ namespace wakeApp.Controllers
             {
                 RedirectToAction(nameof(Index));
             }
-            return View(video);
+            return RedirectToAction(nameof(Index));
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult AddLike([Bind("Id,CountLike,UserId,PostVideoId")] Like postlike)
+        {
+            var like = _repository.AddLike(postlike);
+
+            if (like == null)
+            {
+                RedirectToAction(nameof(Index));
+            }
+
+            return View(like);
         }
 
         // GET: PostVideos/Edit/5

@@ -7,6 +7,8 @@
 *[Autor](#autor)
 *[API](#api)
 
+<img src="/wakeApp/wwwroot/src/Animation.gif" height="425" style="max-width: 100%;"/>
+
 
 ## Tecnologias
 <p>Asp.Net Core</p>
