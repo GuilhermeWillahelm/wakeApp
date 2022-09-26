@@ -1,9 +1,9 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
+using wakeApp.Models;
 
-namespace wakeApp.Models
+namespace wakeApp.Dtos
 {
-    public class PostVideo
+    public class PostVideoDto
     {
         public int Id { get; set; }
         public string Title { get; set; } = string.Empty;
@@ -13,12 +13,12 @@ namespace wakeApp.Models
         public string VideoFile { get; set; } = string.Empty;
         public string ThumbImage { get; set; } = string.Empty;
         public int UserId { get; set; }
-        public virtual User? User { get; set; }
+        public virtual UserDto? UserDto { get; set; }
         public int ChannelId { get; set; }
-        public virtual Channel? Channel { get; set; }
+        public virtual ChannelDto? ChannelDto { get; set; }
         public int LikeId { get; set; }
-        public virtual Like? Like { get; set; }
+        public virtual LikeDto? LikeDto { get; set; }
         public int CommentId { get; set; }
-        public virtual Comment? Comment { get; set; }
+        public virtual CommentDto? CommentDto { get; set; }
     }
 }

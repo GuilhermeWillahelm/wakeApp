@@ -1,12 +1,12 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+﻿using wakeApp.Models;
 
-namespace wakeApp.Models
+namespace wakeApp.Dtos
 {
-    public class Comment
+    public class LikeDto
     {
         public int Id { get; set; }
-        [Column(TypeName = "nvarchar(2000)")]
-        public string CommentText { get; set; } = string.Empty;
+        public int CountLike { get; set; }
+        public int CountDislike { get; set; }
         public int UserId { get; set; }
         public int ChannelId { get; set; }
         public int PostId { get; set; }

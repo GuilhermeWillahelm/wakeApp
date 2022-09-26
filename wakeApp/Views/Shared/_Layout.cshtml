@@ -14,6 +14,7 @@
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/wakeApp.styles.css" asp-append-version="true" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.9.1/font/bootstrap-icons.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css" integrity="sha512-KfkfwYDsLkIlwQp6LFnl8zNdLGxu9YAA1QvwINks4PhcElQSvqcyVLLD9aMhXd13uQjoXtEKNosOWaZqXgel0g==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 </head>
 <body>
@@ -38,7 +39,8 @@
                         @if (@ViewBag.NameLogin != "")
                         {
                             <a class="nav-link" asp-controller="PostVideos" asp-action="Create">
-                                <span><i class="fas fa-plus-circle fa-lg"></i> 
+                                <span>
+                                    <i class="bi bi-plus-circle-fill"></i>
                                     <strong>New Vídeo</strong>
                                 </span>
                             </a>

@@ -6,8 +6,9 @@
         public int CountLike { get; set; }
         public int CountDislike { get; set; }
         public int UserId { get; set; }
-        public virtual User? User { get; set; }
-        public int PostVideoId { get; set; }
-        public virtual PostVideo? PostVideo { get; set; } = new PostVideo();
+        public int ChannelId { get; set; }
+        public int PostId { get; set; }
+        public bool Flag { get; set; }
+        public List<PostVideo>? PostVideos { get; set; }
     }
 }

@@ -52,7 +52,7 @@ namespace wakeApp.Controllers
             }
             Channel channel = new Channel();
             channel = _channelsRepository.GetChannelById(id);
-            channel.Videos = _postVideoRepository.GetAllVideosPerChannel(id);
+            channel.PostVideos = _postVideoRepository.GetAllVideosPerChannel(id);
 
             if (channel.ChannelName == "")
             {

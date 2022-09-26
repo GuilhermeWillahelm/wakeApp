@@ -1,4 +1,5 @@
 ﻿using wakeApp.Models;
+using wakeApp.Dtos;
 using wakeApp.Services;
 using Newtonsoft.Json;
 using System.Text;
@@ -10,11 +11,13 @@ namespace wakeApp.Repositories
         HttpClient _httpClient = new HttpClient() { BaseAddress = new Uri("https://localhost:7099/api/") };
         private readonly IUsersRepository _usersRepository;
         private readonly IUploadService _uploadService;
+        private readonly IChannelsRepository _channelsRepository;
 
-        public PostVideoRepository(IUsersRepository usersRepository, IUploadService uploadService)
+        public PostVideoRepository(IUsersRepository usersRepository, IUploadService uploadService, IChannelsRepository channelsRepository)
         {
             _usersRepository = usersRepository;
             _uploadService = uploadService;
+            _channelsRepository = channelsRepository;
         }
 
         public List<PostVideo> GetAllVideos(string? searchString)
@@ -44,20 +47,20 @@ namespace wakeApp.Repositories
             return videos;
         }
 
-        public PostVideo GetPostVideo(int? id)
+        public PostVideoDto GetPostVideo(int? id)
         {
             if (id == null)
             {
                 return null;
             }
 
-            PostVideo postVideo = new PostVideo();
+            PostVideoDto postVideo = new PostVideoDto();
             HttpResponseMessage response = _httpClient.GetAsync(_httpClient.BaseAddress + "PostVideos/" + id).Result;
 
             if (response.IsSuccessStatusCode)
             {
                 var data = response.Content.ReadAsStringAsync().Result;
-                postVideo = JsonConvert.DeserializeObject<PostVideo>(data);
+                postVideo = JsonConvert.DeserializeObject<PostVideoDto>(data);
             }
 
             if (postVideo == null)
@@ -71,10 +74,12 @@ namespace wakeApp.Repositories
 
         public PostVideo CreatePostVideo(PostVideo postVideo, IFormFile fileImage, IFormFile fileVideo)
         {
+            var channel = _channelsRepository.GetChannelById(_usersRepository.GetUserId());
             postVideo.VideoFile = _uploadService.UploadVideo(fileVideo);
             postVideo.ThumbImage = _uploadService.UploadImage(fileImage);
             postVideo.Posted = DateTime.Now;
-            postVideo.UserId = _usersRepository.GetUserId();
+            postVideo.UserId = _usersRepository.GetUserId();         
+            postVideo.ChannelId = channel.Id;
 
             string data = JsonConvert.SerializeObject(postVideo);
             StringContent content = new StringContent(data, Encoding.UTF8, "application/json");
@@ -198,5 +203,35 @@ namespace wakeApp.Repositories
         {
             throw new NotImplementedException();
         }
+
+        private static PostVideoDto ItemToDTO(PostVideo todoItem) =>
+            new PostVideoDto
+            {
+                Id = todoItem.Id,
+                Title = todoItem.Title,
+                Description = todoItem.Description,
+                Posted = todoItem.Posted,
+                VideoFile = todoItem.VideoFile,
+                ThumbImage = todoItem.ThumbImage,
+                UserId = todoItem.UserId,
+                ChannelId = todoItem.ChannelId,
+                ChannelDto = new ChannelDto
+                {
+                    ChannelName = todoItem.Channel.ChannelName,
+                    IconChannel = todoItem.Channel.IconChannel
+                },
+                LikeId = todoItem.LikeId,
+                LikeDto = new LikeDto
+                {
+                    CountLike = todoItem.Like.CountLike,
+                    CountDislike = todoItem.Like.CountDislike
+                },
+                CommentId = todoItem.CommentId,
+                CommentDto = new CommentDto
+                {
+                    CommentText = todoItem.Comment.CommentText
+                }
+
+            };
     }
 }

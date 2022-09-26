@@ -5,7 +5,7 @@
     ViewData["Title"] = "Index";
 }
 
-@foreach (var item in Model.Videos)
+@foreach (var item in Model.PostVideos)
 {
     <div class="card d-inline-block" style="width: 18rem; margin: 6px;">
         <a asp-controller="PostVideos" asp-action="Details" asp-route-id="@item.Id">

@@ -1,4 +1,5 @@
 ﻿using wakeApp.Models;
+using wakeApp.Dtos;
 
 namespace wakeApp.Repositories
 {
@@ -9,7 +10,7 @@ namespace wakeApp.Repositories
         List<Like> GetLikesPerVideos(int? idLike, int? idVideo);
         Like AddLike(Like like);
         Like UpdateLike(int? idLike, int? idVideo, Like like);
-        PostVideo GetPostVideo(int? id);
+        PostVideoDto GetPostVideo(int? id);
         PostVideo CreatePostVideo(PostVideo postVideo, IFormFile fileImage, IFormFile fileVideo);
         PostVideo EditVideo(int id, PostVideo postVideo, IFormFile fileImage, IFormFile fileVideo);
         bool DeleteVideo(int id);

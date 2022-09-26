@@ -5,7 +5,8 @@ using Microsoft.AspNetCore.CookiePolicy;
 using wakeApp.Services;
 using wakeApp.Repositories;
 using wakeApp.Data;
-
+using wakeApp.Helper;
+using AutoMapper;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,6 +14,7 @@ builder.Services.AddDbContext<wakeAppContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("wakeAppContext")));
 
 builder.Services.AddHttpContextAccessor();
+builder.Services.AddAutoMapper(typeof(AutoMapperProfiles));
 builder.Services.AddScoped<IUploadService, UploadService>();
 builder.Services.AddScoped<IPostVideoRepository, PostVideoRepository>();
 builder.Services.AddScoped<IUsersRepository, UsersRepository>();
