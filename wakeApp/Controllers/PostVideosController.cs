@@ -8,6 +8,7 @@ using wakeApp.Data;
 using wakeApp.Models;
 using wakeApp.Services;
 using wakeApp.Repositories;
+using wakeApp.Dtos;
 
 namespace wakeApp.Controllers
 {
@@ -16,7 +17,7 @@ namespace wakeApp.Controllers
         private readonly IPostVideoRepository _repository;
         HttpClient _httpClient = new HttpClient() { BaseAddress = new Uri("https://localhost:7099/api/") };
         private readonly IUsersRepository _usersRepository;
-
+        ViewModel viewModel = new ViewModel();
         public PostVideosController(IPostVideoRepository repository, IUsersRepository usersRepository)
         {
             _repository = repository;
@@ -39,12 +40,14 @@ namespace wakeApp.Controllers
 
         // GET: PostVideos/Details/5
         public ActionResult Details(int? id)
-        {
+       {
             ViewBag.NameLogin = _usersRepository.GetUserName();
             ViewBag.UseID = _usersRepository.GetUserId();
-            var postVideo = _repository.GetPostVideo(id); 
+            viewModel.PostVideoDto = _repository.GetPostVideo(id);
+            viewModel.EvaluationDto = _repository.GetLikesPerVideos(viewModel.PostVideoDto.Id);
+            viewModel.CommentDtos = _repository.GetCommentsPerVideos(viewModel.PostVideoDto.Id);
 
-            return View(postVideo);
+            return View(viewModel);
         }
 
         // GET: PostVideos/Create
@@ -71,16 +74,19 @@ namespace wakeApp.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult AddLike([Bind("Id,CountLike,UserId,PostVideoId")] Like postlike)
+        public ActionResult AddLike([Bind("Id,CountLike,UserId,PostId")] EvaluationDto evaluation)
         {
-            var like = _repository.AddLike(postlike);
+            evaluation.UserId = viewModel.PostVideoDto.UserId;
+            evaluation.PostId = viewModel.PostVideoDto.Id;
+            evaluation.CountLike = 1;
+            evaluation = _repository.AddLike(evaluation);
 
-            if (like == null)
+            if (evaluation == null)
             {
                 RedirectToAction(nameof(Index));
             }
 
-            return View(like);
+            return RedirectToAction(nameof(Details));
         }
 
         // GET: PostVideos/Edit/5

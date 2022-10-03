@@ -3,6 +3,7 @@ using wakeApp.Dtos;
 using wakeApp.Services;
 using Newtonsoft.Json;
 using System.Text;
+using System.Linq;
 
 namespace wakeApp.Repositories
 {
@@ -153,53 +154,85 @@ namespace wakeApp.Repositories
             return postVideos;
         }
 
-        public List<Like> GetLikesPerVideos(int? idLike, int? idVideo)
+        public List<CommentDto> GetCommentsPerVideos(int? idVideo)
         {
-            if(idLike == null && idVideo == null)
+            if (idVideo == null)
             {
                 return null;
             }
 
-            List<Like> likes = new List<Like>();
-            HttpResponseMessage response = _httpClient.GetAsync(_httpClient.BaseAddress + "" + idLike).Result;
+            List<ViewModel> auxPosts = new List<ViewModel>();
+            List<CommentDto> comments = new List<CommentDto>();
+            HttpResponseMessage response = _httpClient.GetAsync(_httpClient.BaseAddress + "Comments/GetCommentsPerVideo/" + idVideo).Result;
 
             if (response.IsSuccessStatusCode)
             {
                 var data = response.Content.ReadAsStringAsync().Result;
-                likes = JsonConvert.DeserializeObject<List<Like>>(data);
+                comments = JsonConvert.DeserializeObject<List<CommentDto>>(data);
             }
 
-            if(likes == null)
+            if (comments == null)
             {
                 return null;
             }
 
-            return likes;
+            return comments;
         }
 
-        public Like AddLike(Like like)
+        public EvaluationDto GetLikesPerVideos(int? idVideo)
         {
-            if(like == null)
+            if (idVideo == null)
             {
                 return null;
             }
 
-            like.UserId = _usersRepository.GetUserId();
-            string data = JsonConvert.SerializeObject(like);
+            EvaluationDto aux = new EvaluationDto();
+            List<Evaluation> evaluations = new List<Evaluation>();
+            HttpResponseMessage response = _httpClient.GetAsync(_httpClient.BaseAddress + "Evaluations/GetLikesPerVideo/" + idVideo).Result;
+
+            if (response.IsSuccessStatusCode)
+            {
+                var data = response.Content.ReadAsStringAsync().Result;
+                evaluations = JsonConvert.DeserializeObject<List<Evaluation>>(data);
+            }
+
+            if(evaluations == null)
+            {
+                return null;
+            }
+
+            foreach (var value in evaluations)
+            {
+                aux.TotalLikes += value.CountLike;
+                aux.TotalDislikes += value.CountDislike;
+            }
+
+            return aux;
+        }
+
+        public EvaluationDto AddLike(EvaluationDto evaluation)
+        {
+            if(evaluation == null)
+            {
+                return null;
+            }
+
+            evaluation.UserId = _usersRepository.GetUserId();
+            string data = JsonConvert.SerializeObject(evaluation);
 
             StringContent content = new StringContent(data, Encoding.UTF8, "application/json");
 
-            HttpResponseMessage response = _httpClient.PostAsync(_httpClient.BaseAddress + "Like/", content).Result;
+            HttpResponseMessage response = _httpClient.PostAsync(_httpClient.BaseAddress + "Evaluations/", content).Result;
             if (response.IsSuccessStatusCode)
             {
                 return null;
             }
 
-            return like;
+            return evaluation;
 
         }
 
-        public Like UpdateLike(int? idLike, int? idVideo, Like like)
+        public Evaluation UpdateLike(int? idLike, int? idVideo, Evaluation like)
         {
             throw new NotImplementedException();
         }
@@ -220,18 +253,13 @@ namespace wakeApp.Repositories
                     ChannelName = todoItem.Channel.ChannelName,
                     IconChannel = todoItem.Channel.IconChannel
                 },
-                LikeId = todoItem.LikeId,
-                LikeDto = new LikeDto
+                EvaluationId = todoItem.EvaluationId,
+                EvaluationDto = new EvaluationDto
                 {
-                    CountLike = todoItem.Like.CountLike,
-                    CountDislike = todoItem.Like.CountDislike
-                },
-                CommentId = todoItem.CommentId,
-                CommentDto = new CommentDto
-                {
-                    CommentText = todoItem.Comment.CommentText
+                    CountLike = todoItem.Evaluation.CountLike,
+                    CountDislike = todoItem.Evaluation.CountDislike,
                 }
-
             };
+
     }
 }

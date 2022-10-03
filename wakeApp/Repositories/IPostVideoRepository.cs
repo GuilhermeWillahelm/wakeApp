@@ -7,9 +7,10 @@ namespace wakeApp.Repositories
     {
         List<PostVideo> GetAllVideos(string? stringSearch);
         List<PostVideo> GetAllVideosPerChannel(int? id);
-        List<Like> GetLikesPerVideos(int? idLike, int? idVideo);
-        Like AddLike(Like like);
-        Like UpdateLike(int? idLike, int? idVideo, Like like);
+        EvaluationDto GetLikesPerVideos(int? idVideo);
+        List<CommentDto> GetCommentsPerVideos(int? idVideo);
+        EvaluationDto AddLike(EvaluationDto evaluation);
+        Evaluation UpdateLike(int? idLike, int? idVideo, Evaluation evaluation);
         PostVideoDto GetPostVideo(int? id);
         PostVideo CreatePostVideo(PostVideo postVideo, IFormFile fileImage, IFormFile fileVideo);
         PostVideo EditVideo(int id, PostVideo postVideo, IFormFile fileImage, IFormFile fileVideo);

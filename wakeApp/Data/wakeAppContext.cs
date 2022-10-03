@@ -19,5 +19,6 @@ namespace wakeApp.Data
         public DbSet<User> Users { get; set; }
         public DbSet<UserLogin> UserLogins { get; set; }
         public DbSet<Channel> Channels { get; set; }
+        public DbSet<Evaluation> Evaluations { get; set; }
     }
 }

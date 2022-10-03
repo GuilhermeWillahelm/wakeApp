@@ -1,8 +1,6 @@
-﻿using wakeApp.Models;
-
-namespace wakeApp.Dtos
+﻿namespace wakeApp.Models
 {
-    public class LikeDto
+    public class Evaluation
     {
         public int Id { get; set; }
         public int CountLike { get; set; }
@@ -11,6 +9,5 @@ namespace wakeApp.Dtos
         public int ChannelId { get; set; }
         public int PostId { get; set; }
         public bool Flag { get; set; }
-        public List<PostVideo>? PostVideos { get; set; }
     }
 }
