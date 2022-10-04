@@ -130,20 +130,20 @@ namespace wakeApp.Repositories
             return true;
         }
 
-        public List<PostVideo> GetAllVideosPerChannel(int? id)
+        public List<PostVideoDto> GetAllVideosPerChannel(int? id)
         {
             if (id == null)
             {
                 return null;
             }
 
-            List<PostVideo> postVideos = new List<PostVideo>();
+            List<PostVideoDto> postVideos = new List<PostVideoDto>();
             HttpResponseMessage response = _httpClient.GetAsync(_httpClient.BaseAddress + "PostVideos/GetPostVideoById/" + id).Result;
 
             if (response.IsSuccessStatusCode)
             {
                 var data = response.Content.ReadAsStringAsync().Result;
-                postVideos = JsonConvert.DeserializeObject<List<PostVideo>>(data);
+                postVideos = JsonConvert.DeserializeObject<List<PostVideoDto>>(data);
             }
 
             if (postVideos == null)

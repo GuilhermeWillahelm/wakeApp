@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using System.Text;
 using wakeApp.Models;
+using wakeApp.Dtos;
 using wakeApp.Services;
 
 namespace wakeApp.Repositories
@@ -32,19 +33,43 @@ namespace wakeApp.Repositories
             return channels;
         }
 
-        public Channel GetChannelById(int? id)
+        public ChannelDto GetChannelById(int? id)
         {
-            Channel channel = new Channel();
+            ChannelDto channel = new ChannelDto();
             HttpResponseMessage response = _httpClient.GetAsync(_httpClient.BaseAddress + "Channels/GetChannelByUser/" + id).Result;
 
             if (response.IsSuccessStatusCode)
             {
                 var data = response.Content.ReadAsStringAsync().Result;
-                channel = JsonConvert.DeserializeObject<Channel>(data);
+                channel = JsonConvert.DeserializeObject<ChannelDto>(data);
             }
 
 
             return channel;
+        }
+
+        public List<PostVideoDto> GetAllVideosPerChannel(int? id)
+        {
+            if (id == null)
+            {
+                return null;
+            }
+
+            List<PostVideoDto> postVideos = new List<PostVideoDto>();
+            HttpResponseMessage response = _httpClient.GetAsync(_httpClient.BaseAddress + "PostVideos/GetPostVideoById/" + id).Result;
+
+            if (response.IsSuccessStatusCode)
+            {
+                var data = response.Content.ReadAsStringAsync().Result;
+                postVideos = JsonConvert.DeserializeObject<List<PostVideoDto>>(data);
+            }
+
+            if (postVideos == null)
+            {
+                return null;
+            }
+
+            return postVideos;
         }
 
         public Channel CreateChannel(Channel channel, IFormFile fileBanner, IFormFile fileIcon)

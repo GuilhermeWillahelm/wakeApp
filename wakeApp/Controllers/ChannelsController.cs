@@ -14,6 +14,7 @@ using wakeApp.Repositories;
 using Newtonsoft.Json;
 using wakeApp.Data;
 using wakeApp.Models;
+using wakeApp.Dtos;
 
 namespace wakeApp.Controllers
 {
@@ -23,6 +24,7 @@ namespace wakeApp.Controllers
         private readonly IChannelsRepository _channelsRepository;
         private readonly IPostVideoRepository _postVideoRepository;
         private readonly IUsersRepository _usersRepository;
+        ViewModel viewModel = new ViewModel();
 
         public ChannelsController(IChannelsRepository channelsRepository, IPostVideoRepository postVideoRepository, IUsersRepository usersRepository)
         {
@@ -50,18 +52,19 @@ namespace wakeApp.Controllers
             {
                 return NotFound();
             }
-            Channel channel = new Channel();
-            channel = _channelsRepository.GetChannelById(id);
-            channel.PostVideos = _postVideoRepository.GetAllVideosPerChannel(id);
+            
+            viewModel.ChannelDto = _channelsRepository.GetChannelById(id);
+            viewModel.PostVideoDtos = _postVideoRepository.GetAllVideosPerChannel(id);
 
-            if (channel.ChannelName == "")
+            if (viewModel.ChannelDto.ChannelName == "")
             {
                 return RedirectToAction(nameof(Create));
             }
 
-            return View(channel);
+            return View(viewModel);
         }
 
+        /*
         public IActionResult Videos()
         {
             var id = _usersRepository.GetUserId();
@@ -79,7 +82,7 @@ namespace wakeApp.Controllers
 
             return View(posts);
         }
-
+        */
         // GET: Channels/Create
         public IActionResult Create()
         {
