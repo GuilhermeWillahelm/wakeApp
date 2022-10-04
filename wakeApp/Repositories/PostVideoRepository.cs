@@ -21,9 +21,9 @@ namespace wakeApp.Repositories
             _channelsRepository = channelsRepository;
         }
 
-        public List<PostVideo> GetAllVideos(string? searchString)
+        public List<PostVideoDto> GetAllVideos(string? searchString)
         {
-            List<PostVideo> videos = new List<PostVideo>();
+            List<PostVideoDto> videos = new List<PostVideoDto>();
             try
             {
                 HttpResponseMessage response = _httpClient.GetAsync(_httpClient.BaseAddress + "PostVideos").Result;
@@ -36,7 +36,7 @@ namespace wakeApp.Repositories
                 if (response.IsSuccessStatusCode)
                 {
                     var data = response.Content.ReadAsStringAsync().Result;
-                    videos = JsonConvert.DeserializeObject<List<PostVideo>>(data);
+                    videos = JsonConvert.DeserializeObject<List<PostVideoDto>>(data);
                 }
 
                 return videos;
@@ -250,6 +250,7 @@ namespace wakeApp.Repositories
                 ChannelId = todoItem.ChannelId,
                 ChannelDto = new ChannelDto
                 {
+                    Id = todoItem.Channel.Id,
                     ChannelName = todoItem.Channel.ChannelName,
                     IconChannel = todoItem.Channel.IconChannel
                 },

@@ -28,14 +28,14 @@ namespace wakeApp.Controllers
         {
             ViewBag.NameLogin = _usersRepository.GetUserName();
             ViewBag.UseID = _usersRepository.GetUserId();
-            var videos = _repository.GetAllVideos(searchString);
+            viewModel.PostVideoDtos = _repository.GetAllVideos(searchString);
 
-            if(videos == null)
+            if(viewModel.PostVideoDtos == null)
             {
                 return View("Error");
             }
             
-            return View(videos.ToList());
+            return View(viewModel);
         }
 
         // GET: PostVideos/Details/5

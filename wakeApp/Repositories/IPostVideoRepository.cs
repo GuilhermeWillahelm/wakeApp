@@ -5,7 +5,7 @@ namespace wakeApp.Repositories
 {
     public interface IPostVideoRepository
     {
-        List<PostVideo> GetAllVideos(string? stringSearch);
+        List<PostVideoDto> GetAllVideos(string? stringSearch);
         List<PostVideoDto> GetAllVideosPerChannel(int? id);
         EvaluationDto GetLikesPerVideos(int? idVideo);
         List<CommentDto> GetCommentsPerVideos(int? idVideo);

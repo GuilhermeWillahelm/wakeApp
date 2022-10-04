@@ -2,7 +2,7 @@
 @model ViewModel
 
 @{
-    ViewData["Title"] = "Details";
+    ViewData["Title"] = @Model.PostVideoDto.Title + " - ";
     ViewData["Dislike"] = "Não Gostei";
     ViewData["like"] = "Gostei";
 }
@@ -16,42 +16,67 @@
         </div>
         <div class="card-body">
             <h5 class="card-title">@Html.DisplayFor(model => model.PostVideoDto.Title)</h5>
-            @Html.DisplayFor(model => model.PostVideoDto.Posted)
-            @if(Model.EvaluationDto.TotalLikes != 0) 
-            {
-                <form asp-action="AddLike" >
-                    <input type="hidden" asp-for="PostVideoDto.Id" class="form-control" />
-                    <input type="hidden" asp-for="PostVideoDto.UserId" class="form-control" />
-                    <input type="hidden" asp-for="PostVideoDto.ChannelDto.Id" class="form-control" />
-                    <button style="background:none; color:white; border:none;" type="submit">
-                        <i class="bi bi-hand-thumbs-up"></i> @Html.DisplayFor(model => model.EvaluationDto.TotalLikes)
-                    </button>
-                </form>
-            }
-            else 
-            {
-                @ViewData["like"]
-            }
-            @if (Model.EvaluationDto.TotalDislikes != 0)
-            {
-                <form>
-                    <button style="background:none; color:white; border:none;" type="submit">
-                        <i class="bi bi-hand-thumbs-down"></i> @Html.DisplayFor(model => model.EvaluationDto.TotalDislikes)
-                    </button>
-                </form>
-                
-            }
-            else
-            {
-                @ViewData["Dislike"]
-            } 
+            <ul >
+                <li style="display:inline-block;">
+                    @Html.DisplayFor(model => model.PostVideoDto.Posted)
+                </li>
+                @if (Model.EvaluationDto.TotalLikes != 0)
+                {
+                    <li style="display:inline-block;">
+                        <form asp-action="AddLike">
+                            <input type="hidden" asp-for="PostVideoDto.Id" class="form-control" />
+                            <input type="hidden" asp-for="PostVideoDto.UserId" class="form-control" />
+                            <input type="hidden" asp-for="PostVideoDto.ChannelDto.Id" class="form-control" />
+                            <button style="background:none; color:white; border:none;" type="submit">
+                                <i class="bi bi-hand-thumbs-up"></i> @Html.DisplayFor(model => model.EvaluationDto.TotalLikes)
+                            </button>
+                        </form>
+                    </li>
+                }
+                else
+                {
+                    <li style="display:inline-block;">
+                        <form asp-action="AddLike">
+                            <input type="hidden" asp-for="PostVideoDto.Id" class="form-control" />
+                            <input type="hidden" asp-for="PostVideoDto.UserId" class="form-control" />
+                            <input type="hidden" asp-for="PostVideoDto.ChannelDto.Id" class="form-control" />
+                            <button style="background:none; color:white; border:none;" type="submit">
+                                <i class="bi bi-hand-thumbs-up"></i> @ViewData["like"]
+                            </button>
+                        </form>
+                    </li>
+                }
+                @if (Model.EvaluationDto.TotalDislikes != 0)
+                {
+                    <li style="display:inline-block;">
+                        <form>
+                            <button style="background:none; color:white; border:none;" type="submit">
+                                <i class="bi bi-hand-thumbs-down"></i> @Html.DisplayFor(model => model.EvaluationDto.TotalDislikes)
+                            </button>
+                        </form>
+                    </li>
+
+                }
+                else
+                {
+                    <li style="display:inline-block;">
+                        <form>
+                            <button style="background:none; color:white; border:none;" type="submit">
+                                <i class="bi bi-hand-thumbs-down"></i> @ViewData["Dislike"]
+                            </button>
+                        </form>
+                    </li>
+                }
+            </ul>
             <hr />
             
             <!--<partial name="../PostVideos/LikesVideo.cshtml" view-data="ViewData" />-->
             <div>
                 <h5>
-                    <img src="@Html.DisplayFor(model => model.PostVideoDto.ChannelDto.IconChannel)" style="border:none; width:50px; height:50px;" />
-                    @Html.DisplayFor(model => model.PostVideoDto.ChannelDto.ChannelName)
+                    <a asp-controller="Channels" asp-action="Details" asp-route-id="@Model.PostVideoDto.ChannelDto.Id">
+                        <img src="@Html.DisplayFor(model => model.PostVideoDto.ChannelDto.IconChannel)" style="border:none; width:50px; height:50px;" />
+                        @Html.DisplayFor(model => model.PostVideoDto.ChannelDto.ChannelName)
+                    </a>
                 </h5>
                 <p class="card-text">@Html.DisplayFor(model => model.PostVideoDto.Description)</p>
             </div>
