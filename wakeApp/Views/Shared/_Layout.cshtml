@@ -10,6 +10,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/png" href="~/src/icon.ico" sizes="32x32">
     <title>@ViewData["Title"] Wake</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
@@ -21,7 +22,9 @@
     <header>
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
             <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="PostVideos" asp-action="Index">Wake</a>
+                <a class="navbar-brand" asp-area="" asp-controller="PostVideos" asp-action="Index">
+                    <img style="width: 40px;" src="~/src/IconWake.png" />  Wake
+                </a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
                         aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
@@ -30,7 +33,9 @@
                     <ul class="navbar-nav flex-grow-1 justify-content-center">
                         <form class="d-md-flex border-1" asp-controller="PostVideos" asp-action="Index">
                             <input class="form-control me-0" style="width: 400px;" type="search" placeholder="Search" aria-label="Search" name="SearchString">
-                            <button class="btn btn-dark btn-outline-info" type="submit"><i class="fa-brands fa-searchengin"></i></button>
+                            <button class="btn btn-outline-info" style="margin-left: 10px;" type="submit">
+                                <i class="bi bi-search" style="font-size:25px;"></i>
+                            </button>
                         </form>
                     </ul>
                 </div>
@@ -71,11 +76,10 @@
                             }
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
-                            <li><a class="dropdown-item" href="#"></a></li>
                             <li><a class="dropdown-item" asp-area="" asp-controller="Channels" asp-action="Details" asp-route-id="@ViewBag.UseID">Meu Canal</a></li>
                             <li>
                                 <a class="dropdown-item" asp-area="" asp-controller="Users" asp-action="Details" asp-route-id="@ViewBag.UseID">
-                                Account
+                                 Conta do Usuário
                                 </a>
                             </li>
                             <li>
