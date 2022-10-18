@@ -1,6 +1,6 @@
-﻿namespace wakeApp.Models
+﻿namespace wakeApp.Dtos
 {
-    public class Follower
+    public class FollowerDto
     {
         public int Id { get; set; }
         public int CountFollows { get; set; }

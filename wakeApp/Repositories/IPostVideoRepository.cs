@@ -9,6 +9,7 @@ namespace wakeApp.Repositories
         List<PostVideoDto> GetAllVideosPerChannel(int? id);
         EvaluationDto GetLikesPerVideos(int? idVideo);
         List<CommentDto> GetCommentsPerVideos(int? idVideo);
+        int GetFollowersPerChannel(int? idChannel);
         EvaluationDto AddLike(EvaluationDto evaluation);
         Evaluation UpdateLike(int? idLike, int? idVideo, Evaluation evaluation);
         PostVideoDto GetPostVideo(int? id);

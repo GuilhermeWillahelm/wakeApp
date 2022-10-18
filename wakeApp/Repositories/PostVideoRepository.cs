@@ -4,6 +4,7 @@ using wakeApp.Services;
 using Newtonsoft.Json;
 using System.Text;
 using System.Linq;
+using CloudinaryDotNet.Actions;
 
 namespace wakeApp.Repositories
 {
@@ -179,6 +180,36 @@ namespace wakeApp.Repositories
             return comments;
         }
 
+        public int GetFollowersPerChannel(int? channelId)
+        {
+            if (channelId == null)
+            {
+                return 0;
+            }
+
+            int aux = 0;
+            List<Follower> followers = new List<Follower>();
+            HttpResponseMessage response = _httpClient.GetAsync(_httpClient.BaseAddress + "Followers/GetFollowersPerChannel/" + channelId).Result;
+
+            if (response.IsSuccessStatusCode)
+            {
+                var data = response.Content.ReadAsStringAsync().Result;
+                followers = JsonConvert.DeserializeObject<List<Follower>>(data);
+            }
+
+            if (followers == null)
+            {
+                return 0;
+            }
+
+            foreach (var value in followers)
+            {
+                aux = value.CountFollows;
+            }
+
+            return aux;
+        }
+
         public EvaluationDto GetLikesPerVideos(int? idVideo)
         {
             if (idVideo == null)
@@ -252,13 +283,8 @@ namespace wakeApp.Repositories
                 {
                     Id = todoItem.Channel.Id,
                     ChannelName = todoItem.Channel.ChannelName,
-                    IconChannel = todoItem.Channel.IconChannel
-                },
-                EvaluationId = todoItem.EvaluationId,
-                EvaluationDto = new EvaluationDto
-                {
-                    CountLike = todoItem.Evaluation.CountLike,
-                    CountDislike = todoItem.Evaluation.CountDislike,
+                    IconChannel = todoItem.Channel.IconChannel,
+                    CountFollows = todoItem.Channel.CountFollows,
                 }
             };
 

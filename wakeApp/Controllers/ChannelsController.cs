@@ -55,6 +55,7 @@ namespace wakeApp.Controllers
             
             viewModel.ChannelDto = _channelsRepository.GetChannelById(id);
             viewModel.PostVideoDtos = _postVideoRepository.GetAllVideosPerChannel(id);
+            viewModel.CountFollowers = _postVideoRepository.GetFollowersPerChannel(id);
 
             if (viewModel.ChannelDto.ChannelName == "")
             {

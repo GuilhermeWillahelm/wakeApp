@@ -16,7 +16,5 @@ namespace wakeApp.Dtos
         public virtual UserDto? UserDto { get; set; }
         public int ChannelId { get; set; }
         public virtual ChannelDto? ChannelDto { get; set; }
-        public int EvaluationId { get; set; }
-        public virtual EvaluationDto? EvaluationDto { get; set; }
     }
 }

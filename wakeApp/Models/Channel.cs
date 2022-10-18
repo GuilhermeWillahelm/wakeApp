@@ -12,6 +12,7 @@ namespace wakeApp.Models
         public DateTime CreatedChannel { get; set; }
         public string ImageBanner { get; set; } = string.Empty;
         public string IconChannel { get; set; } = string.Empty;
+        public int CountFollows { get; set; }
         public int UserId { get; set; }
         public virtual User? User { get; set; }
         public List<PostVideo>? PostVideos { get; set; }

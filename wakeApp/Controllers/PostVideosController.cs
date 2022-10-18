@@ -46,6 +46,7 @@ namespace wakeApp.Controllers
             viewModel.PostVideoDto = _repository.GetPostVideo(id);
             viewModel.EvaluationDto = _repository.GetLikesPerVideos(viewModel.PostVideoDto.Id);
             viewModel.CommentDtos = _repository.GetCommentsPerVideos(viewModel.PostVideoDto.Id);
+            viewModel.CountFollowers = _repository.GetFollowersPerChannel(viewModel.PostVideoDto.ChannelId);
 
             return View(viewModel);
         }

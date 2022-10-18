@@ -3,6 +3,8 @@
 
 @{
     ViewData["Title"] = @Model.ChannelDto.ChannelName + " - ";
+    ViewData["Follows"] = "Nenhum Inscrito";
+
 }
 
 <div>
@@ -25,6 +27,16 @@
                     <div class="" style="text-align:center;">
                         <img src="@Html.DisplayFor(model => model.ChannelDto.IconChannel)" style="width: 70px; ">
                         <h5 class="card-title" style="align-items:center;">@Html.DisplayFor(model => model.ChannelDto.ChannelName)</h5>
+                        @if(Model.CountFollowers == 0)
+                        {
+                            @ViewData["Follows"]
+                        }
+                        else 
+                        {
+                            <p class="card-title" style="align-items:center;">
+                                @Html.DisplayFor(model => model.CountFollowers) Inscritos
+                            </p>
+                        }
                     </div>
                     <!--
                     if (Model != null)

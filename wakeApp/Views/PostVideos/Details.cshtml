@@ -5,6 +5,7 @@
     ViewData["Title"] = @Model.PostVideoDto.Title + " - ";
     ViewData["Dislike"] = "Não Gostei";
     ViewData["like"] = "Gostei";
+    ViewData["Follows"] = "Inscritos";
 }
 
 <div>
@@ -16,7 +17,10 @@
         </div>
         <div class="card-body">
             <h5 class="card-title">@Html.DisplayFor(model => model.PostVideoDto.Title)</h5>
-            <ul >
+            <ul>
+                <li style="display:inline-block;">
+                    
+                </li>
                 <li style="display:inline-block;">
                     @Html.DisplayFor(model => model.PostVideoDto.Posted)
                 </li>
@@ -78,6 +82,7 @@
                         @Html.DisplayFor(model => model.PostVideoDto.ChannelDto.ChannelName)
                     </a>
                 </h5>
+                <p style="font-size: 15px;">@Html.DisplayFor(model => model.CountFollowers) @ViewData["Follows"]</p>
                 <p class="card-text">@Html.DisplayFor(model => model.PostVideoDto.Description)</p>
             </div>
             <hr />
