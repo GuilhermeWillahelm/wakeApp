@@ -1,12 +1,16 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 
 namespace wakeApp.Models
 {
     public class Channel
     {
         public int Id { get; set; }
+        [Display(Name = "Nome do Canal")]
         public string ChannelName { get; set; } = string.Empty;
+        [Display(Name = "Subtitulo do Canal")]
         public string SubtitleChannel { get; set; } = string.Empty;
+        [Display(Name = "Descrição do Canal")]
         public string ChannelDescription { get; set; } = string.Empty;
         [DataType(DataType.Date)]
         public DateTime CreatedChannel { get; set; }

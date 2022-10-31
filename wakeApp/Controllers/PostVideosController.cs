@@ -44,7 +44,7 @@ namespace wakeApp.Controllers
             ViewBag.NameLogin = _usersRepository.GetUserName();
             ViewBag.UseID = _usersRepository.GetUserId();
             viewModel.PostVideoDto = _repository.GetPostVideo(id);
-            viewModel.EvaluationDto = _repository.GetLikesPerVideos(viewModel.PostVideoDto.Id);
+            viewModel.CountLike = _repository.GetLikesPerVideos(viewModel.PostVideoDto.Id);
             viewModel.CommentDtos = _repository.GetCommentsPerVideos(viewModel.PostVideoDto.Id);
             viewModel.CountFollowers = _repository.GetFollowersPerChannel(viewModel.PostVideoDto.ChannelId);
 
@@ -75,11 +75,10 @@ namespace wakeApp.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult AddLike([Bind("Id,CountLike,UserId,PostId")] EvaluationDto evaluation)
+        public ActionResult CreateLike([Bind("Id,PostId,ChannelId,UserId")] EvaluationDto evaluation)
         {
-            evaluation.UserId = viewModel.PostVideoDto.UserId;
-            evaluation.PostId = viewModel.PostVideoDto.Id;
             evaluation.CountLike = 1;
+            var id = evaluation.PostId;
             evaluation = _repository.AddLike(evaluation);
 
             if (evaluation == null)
@@ -87,7 +86,22 @@ namespace wakeApp.Controllers
                 RedirectToAction(nameof(Index));
             }
 
-            return RedirectToAction(nameof(Details));
+            return Redirect("/PostVideos/Details/" + id);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult CreateComment([Bind("Id,CommentText,UserId,ChannelId,PostId")] CommentDto commentDto)
+        {
+            commentDto.Flag = true;
+            var id = commentDto.PostId;
+            commentDto = _repository.AddComment(commentDto);
+
+            if (commentDto == null)
+            {
+                RedirectToAction(nameof(Index));
+            }
+            return Redirect("/PostVideos/Details/" + id);
         }
 
         // GET: PostVideos/Edit/5

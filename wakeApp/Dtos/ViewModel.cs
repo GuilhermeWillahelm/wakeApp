@@ -10,6 +10,7 @@
         public PostVideoDto? PostVideoDto { get; set; }
         public List<PostVideoDto>? PostVideoDtos { get; set; }
         public EvaluationDto? EvaluationDto { get; set; }
+        public CommentDto? CommentDto { get; set; }
         public List<CommentDto>? CommentDtos { get; set; }
     }
 }

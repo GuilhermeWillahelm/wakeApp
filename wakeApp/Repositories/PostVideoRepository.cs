@@ -210,14 +210,14 @@ namespace wakeApp.Repositories
             return aux;
         }
 
-        public EvaluationDto GetLikesPerVideos(int? idVideo)
+        public int GetLikesPerVideos(int? idVideo)
         {
             if (idVideo == null)
             {
-                return null;
+                return 0;
             }
 
-            EvaluationDto aux = new EvaluationDto();
+            var aux = 0;
             List<Evaluation> evaluations = new List<Evaluation>();
             HttpResponseMessage response = _httpClient.GetAsync(_httpClient.BaseAddress + "Evaluations/GetLikesPerVideo/" + idVideo).Result;
 
@@ -229,13 +229,12 @@ namespace wakeApp.Repositories
 
             if(evaluations == null)
             {
-                return null;
+                return 0;
             }
 
             foreach (var value in evaluations)
             {
-                aux.TotalLikes += value.CountLike;
-                aux.TotalDislikes += value.CountDislike;
+                aux += value.CountLike;
             }
 
             return aux;
@@ -260,7 +259,26 @@ namespace wakeApp.Repositories
             }
 
             return evaluation;
+        }
 
+        public CommentDto AddComment(CommentDto comment)
+        {
+            if (comment == null)
+            {
+                return null;
+            }
+
+            string data = JsonConvert.SerializeObject(comment);
+
+            StringContent content = new StringContent(data, Encoding.UTF8, "application/json");
+
+            HttpResponseMessage response = _httpClient.PostAsync(_httpClient.BaseAddress + "Comments/", content).Result;
+            if (response.IsSuccessStatusCode)
+            {
+                return null;
+            }
+
+            return comment;
         }
 
         public Evaluation UpdateLike(int? idLike, int? idVideo, Evaluation like)

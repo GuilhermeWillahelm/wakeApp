@@ -92,7 +92,7 @@ namespace wakeApp.Controllers
                 return RedirectToRoute(new { controller = "PostVideos", action = "Index"});
             }
 
-            return View();
+            return RedirectToAction(nameof(Index));
         }
 
         // GET: Users/Edit/5

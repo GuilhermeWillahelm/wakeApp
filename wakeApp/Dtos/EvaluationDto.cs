@@ -4,9 +4,7 @@
     {
         public int Id { get; set; }
         public int CountLike { get; set; }
-        public int TotalLikes { get; set; }
         public int CountDislike { get; set; }
-        public int TotalDislikes { get; set; }
         public int UserId { get; set; }
         public int ChannelId { get; set; }
         public int PostId { get; set; }

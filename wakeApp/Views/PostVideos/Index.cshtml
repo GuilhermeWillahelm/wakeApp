@@ -4,7 +4,7 @@
 @foreach (var item in Model.PostVideoDtos)
 {
     <a asp-action="Details" asp-route-id="@item.Id">
-    <div class="card d-inline-block" style="width: 19rem; margin: 8px;">
+    <div class="card-1 d-inline-block" style="width: 19rem; margin: 8px;">
         
             <img src="@Html.DisplayFor(modelItem => item.ThumbImage)" class="card-img-top" alt="...">
             <div class="card-body">

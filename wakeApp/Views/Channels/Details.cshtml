@@ -69,7 +69,6 @@
                         </ul>
                         <form class="d-flex">
                             <input class="form-control me-2 bg-dark" type="search" placeholder="Search" aria-label="Search">
-                            <button class="btn btn-dark btn-outline-info" type="submit"><i class="fa-brands fa-searchengin"></i></button>
                         </form>
                     </div>
                 </div>
@@ -83,7 +82,7 @@
             {
                 @foreach (var item in Model.PostVideoDtos)
                 {
-                    <div class="card d-inline-block" style="width: 18rem; margin: 6px;">
+                    <div class="card-1 d-inline-block" style="width: 18rem; margin: 6px;">
                         <a asp-controller="PostVideos" asp-action="Details" asp-route-id="@item.Id">
                             <img src="@Html.DisplayFor(modelItem => item.ThumbImage)" class="card-img-top" alt="...">
                             <div class="card-body">
