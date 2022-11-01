@@ -89,9 +89,9 @@ namespace wakeApp.Controllers
 
             if (userLogin == false)
             {
-                return RedirectToRoute(new { controller = "PostVideos", action = "Index"});
+                ViewBag.ErrorLogin = "Houve um erro!";
+                return Redirect("/Users/Login");
             }
-
             return RedirectToAction(nameof(Index));
         }
 
