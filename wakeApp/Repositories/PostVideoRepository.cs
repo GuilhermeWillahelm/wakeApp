@@ -1,10 +1,6 @@
 ﻿using wakeApp.Models;
 using wakeApp.Dtos;
 using wakeApp.Services;
-using Newtonsoft.Json;
-using System.Text;
-using System.Linq;
-using CloudinaryDotNet.Actions;
 
 namespace wakeApp.Repositories
 {
@@ -27,17 +23,17 @@ namespace wakeApp.Repositories
             List<PostVideoDto> videos = new List<PostVideoDto>();
             try
             {
-                HttpResponseMessage response = _httpClient.GetAsync(_httpClient.BaseAddress + "PostVideos").Result;
+                var response = _httpClient.GetFromJsonAsync<List<PostVideoDto>>(_httpClient.BaseAddress + "PostVideos");
+                response.Wait();
 
                 if (!String.IsNullOrEmpty(searchString))
                 {
-                    response = _httpClient.GetAsync(_httpClient.BaseAddress + "PostVideos?searchString=" + searchString).Result;
+                    videos = response.Result;
                 }
 
-                if (response.IsSuccessStatusCode)
+                if (response.Status == TaskStatus.RanToCompletion)
                 {
-                    var data = response.Content.ReadAsStringAsync().Result;
-                    videos = JsonConvert.DeserializeObject<List<PostVideoDto>>(data);
+                    videos = response.Result;
                 }
 
                 return videos;
@@ -57,12 +53,13 @@ namespace wakeApp.Repositories
             }
 
             PostVideoDto postVideo = new PostVideoDto();
-            HttpResponseMessage response = _httpClient.GetAsync(_httpClient.BaseAddress + "PostVideos/" + id).Result;
+            var response = _httpClient.GetFromJsonAsync<PostVideoDto>(_httpClient.BaseAddress + "PostVideos/" + id);
+            response.Wait();
 
-            if (response.IsSuccessStatusCode)
+
+            if (response.Status == TaskStatus.RanToCompletion)
             {
-                var data = response.Content.ReadAsStringAsync().Result;
-                postVideo = JsonConvert.DeserializeObject<PostVideoDto>(data);
+                postVideo = response.Result;
             }
 
             if (postVideo == null)
@@ -83,11 +80,12 @@ namespace wakeApp.Repositories
             postVideo.UserId = _usersRepository.GetUserId();         
             postVideo.ChannelId = channel.Id;
 
-            string data = JsonConvert.SerializeObject(postVideo);
-            StringContent content = new StringContent(data, Encoding.UTF8, "application/json");
+            //string data = JsonConvert.SerializeObject(postVideo);
+            //StringContent content = new StringContent(data, Encoding.UTF8, "application/json");
 
-            HttpResponseMessage response = _httpClient.PostAsync(_httpClient.BaseAddress + "PostVideos/CreatePostVideo", content).Result;
-            if (response.IsSuccessStatusCode)
+            var response = _httpClient.PostAsJsonAsync<PostVideo>(_httpClient.BaseAddress + "PostVideos/CreatePostVideo", postVideo);
+            response.Wait();
+            if (response.Status == TaskStatus.RanToCompletion)
             {
                 return null;
             }
@@ -107,11 +105,13 @@ namespace wakeApp.Repositories
             postVideo.Posted = DateTime.Now;
             postVideo.UserId = _usersRepository.GetUserId();
 
-            string data = JsonConvert.SerializeObject(postVideo);
-            StringContent content = new StringContent(data, Encoding.UTF8, "application/json");
+            //string data = JsonConvert.SerializeObject(postVideo);
+            //StringContent content = new StringContent(data, Encoding.UTF8, "application/json");
 
-            HttpResponseMessage response = _httpClient.PutAsync(_httpClient.BaseAddress + "PostVideos/UpdatePostVideo/" + id, content).Result;
-            if (response.IsSuccessStatusCode)
+            var response = _httpClient.PostAsJsonAsync<PostVideo>(_httpClient.BaseAddress + "PostVideos/UpdatePostVideo/", postVideo);
+            response.Wait();
+
+            if (response.Status == TaskStatus.RanToCompletion)
             {
                 return null;
             }
@@ -139,12 +139,12 @@ namespace wakeApp.Repositories
             }
 
             List<PostVideoDto> postVideos = new List<PostVideoDto>();
-            HttpResponseMessage response = _httpClient.GetAsync(_httpClient.BaseAddress + "PostVideos/GetPostVideoById/" + id).Result;
+            var response = _httpClient.GetFromJsonAsync<List<PostVideoDto>>(_httpClient.BaseAddress + "PostVideos/GetPostVideoById/" + id);
+            response.Wait();
 
-            if (response.IsSuccessStatusCode)
+            if (response.Status == TaskStatus.RanToCompletion)
             {
-                var data = response.Content.ReadAsStringAsync().Result;
-                postVideos = JsonConvert.DeserializeObject<List<PostVideoDto>>(data);
+                postVideos = response.Result;
             }
 
             if (postVideos == null)
@@ -153,31 +153,6 @@ namespace wakeApp.Repositories
             }
 
             return postVideos;
-        }
-
-        public List<CommentDto> GetCommentsPerVideos(int? idVideo)
-        {
-            if (idVideo == null)
-            {
-                return null;
-            }
-
-            List<ViewModel> auxPosts = new List<ViewModel>();
-            List<CommentDto> comments = new List<CommentDto>();
-            HttpResponseMessage response = _httpClient.GetAsync(_httpClient.BaseAddress + "Comments/GetCommentsPerVideo/" + idVideo).Result;
-
-            if (response.IsSuccessStatusCode)
-            {
-                var data = response.Content.ReadAsStringAsync().Result;
-                comments = JsonConvert.DeserializeObject<List<CommentDto>>(data);
-            }
-
-            if (comments == null)
-            {
-                return null;
-            }
-
-            return comments;
         }
 
         public int GetFollowersPerChannel(int? channelId)
@@ -189,12 +164,12 @@ namespace wakeApp.Repositories
 
             int aux = 0;
             List<Follower> followers = new List<Follower>();
-            HttpResponseMessage response = _httpClient.GetAsync(_httpClient.BaseAddress + "Followers/GetFollowersPerChannel/" + channelId).Result;
+            var response = _httpClient.GetFromJsonAsync<List<Follower>>(_httpClient.BaseAddress + "Followers/GetFollowersPerChannel/" + channelId);
+            response.Wait();
 
-            if (response.IsSuccessStatusCode)
+            if (response.Status == TaskStatus.RanToCompletion)
             {
-                var data = response.Content.ReadAsStringAsync().Result;
-                followers = JsonConvert.DeserializeObject<List<Follower>>(data);
+                followers = response.Result;
             }
 
             if (followers == null)
@@ -219,12 +194,12 @@ namespace wakeApp.Repositories
 
             var aux = 0;
             List<Evaluation> evaluations = new List<Evaluation>();
-            HttpResponseMessage response = _httpClient.GetAsync(_httpClient.BaseAddress + "Evaluations/GetLikesPerVideo/" + idVideo).Result;
+            var response = _httpClient.GetFromJsonAsync<List<Evaluation>>(_httpClient.BaseAddress + "Evaluations/GetLikesPerVideo/" + idVideo);
+            response.Wait();
 
-            if (response.IsSuccessStatusCode)
+            if (response.Status == TaskStatus.RanToCompletion)
             {
-                var data = response.Content.ReadAsStringAsync().Result;
-                evaluations = JsonConvert.DeserializeObject<List<Evaluation>>(data);
+                evaluations = response.Result;
             }
 
             if(evaluations == null)
@@ -248,37 +223,18 @@ namespace wakeApp.Repositories
             }
 
             evaluation.UserId = _usersRepository.GetUserId();
-            string data = JsonConvert.SerializeObject(evaluation);
+            //string data = JsonConvert.SerializeObject(evaluation);
+            //StringContent content = new StringContent(data, Encoding.UTF8, "application/json");
 
-            StringContent content = new StringContent(data, Encoding.UTF8, "application/json");
+            var response = _httpClient.PostAsJsonAsync<EvaluationDto>(_httpClient.BaseAddress + "Evaluations/", evaluation);
+            response.Wait();
 
-            HttpResponseMessage response = _httpClient.PostAsync(_httpClient.BaseAddress + "Evaluations/", content).Result;
-            if (response.IsSuccessStatusCode)
+            if (response.Status == TaskStatus.RanToCompletion)
             {
                 return null;
             }
 
             return evaluation;
-        }
-
-        public CommentDto AddComment(CommentDto comment)
-        {
-            if (comment == null)
-            {
-                return null;
-            }
-
-            string data = JsonConvert.SerializeObject(comment);
-
-            StringContent content = new StringContent(data, Encoding.UTF8, "application/json");
-
-            HttpResponseMessage response = _httpClient.PostAsync(_httpClient.BaseAddress + "Comments/", content).Result;
-            if (response.IsSuccessStatusCode)
-            {
-                return null;
-            }
-
-            return comment;
         }
 
         public Evaluation UpdateLike(int? idLike, int? idVideo, Evaluation like)

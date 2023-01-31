@@ -14,14 +14,17 @@ namespace wakeApp.Controllers
 {
     public class PostVideosController : Controller
     {
-        private readonly IPostVideoRepository _repository;
         HttpClient _httpClient = new HttpClient() { BaseAddress = new Uri("https://localhost:7099/api/") };
+        private readonly IPostVideoRepository _repository;
         private readonly IUsersRepository _usersRepository;
+        private readonly ICommentRepository _commentRepository;
         ViewModel viewModel = new ViewModel();
-        public PostVideosController(IPostVideoRepository repository, IUsersRepository usersRepository)
+        public PostVideosController(IPostVideoRepository repository, IUsersRepository usersRepository, 
+            ICommentRepository commentRepository)
         {
             _repository = repository;
             _usersRepository = usersRepository;
+            _commentRepository = commentRepository;
         }
         // GET: PostVideos
         public IActionResult Index(string? searchString)
@@ -45,8 +48,9 @@ namespace wakeApp.Controllers
             ViewBag.UseID = _usersRepository.GetUserId();
             viewModel.PostVideoDto = _repository.GetPostVideo(id);
             viewModel.CountLike = _repository.GetLikesPerVideos(viewModel.PostVideoDto.Id);
-            viewModel.CommentDtos = _repository.GetCommentsPerVideos(viewModel.PostVideoDto.Id);
+            viewModel.CommentDtos = _commentRepository.GetCommentsPerVideos(viewModel.PostVideoDto.Id);
             viewModel.CountFollowers = _repository.GetFollowersPerChannel(viewModel.PostVideoDto.ChannelId);
+            viewModel.UserId = _usersRepository.GetUserId();
 
             return View(viewModel);
         }
@@ -86,21 +90,6 @@ namespace wakeApp.Controllers
                 RedirectToAction(nameof(Index));
             }
 
-            return Redirect("/PostVideos/Details/" + id);
-        }
-
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult CreateComment([Bind("Id,CommentText,UserId,ChannelId,PostId")] CommentDto commentDto)
-        {
-            commentDto.Flag = true;
-            var id = commentDto.PostId;
-            commentDto = _repository.AddComment(commentDto);
-
-            if (commentDto == null)
-            {
-                RedirectToAction(nameof(Index));
-            }
             return Redirect("/PostVideos/Details/" + id);
         }
 
@@ -173,6 +162,41 @@ namespace wakeApp.Controllers
             }
 
             return RedirectToAction(nameof(Index));
+        }
+
+        //Comments
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult CreateComment([Bind("Id,CommentText,UserId,ChannelId,PostId")] CommentDto commentDto)
+        {
+            commentDto.Flag = true;
+            var id = commentDto.PostId;
+            commentDto = _commentRepository.AddComment(commentDto);
+
+            if (commentDto == null)
+            {
+                RedirectToAction(nameof(Index));
+            }
+            return Redirect("/PostVideos/Details/" + id);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteComment(int idVideo, int idComment, int UserId)
+        {
+            if (idComment == 0 && UserId == 0)
+            {
+                return NotFound();
+            }
+
+            var postVideo = _commentRepository.DeleteComment(idComment, UserId);
+
+            if (postVideo == false)
+            {
+                return NotFound();
+            }
+
+            return Redirect("/PostVideos/Details/" + idVideo);
         }
     }
 }

@@ -22,12 +22,13 @@ namespace wakeApp.Repositories
         public List<Channel> GetAllChannels()
         {
             List<Channel> channels = new List<Channel>();
-            HttpResponseMessage response = _httpClient.GetAsync(_httpClient.BaseAddress + "Channels").Result;
+            var response = _httpClient.GetFromJsonAsync<List<Channel>>(_httpClient.BaseAddress + "Channels");
+            response.Wait();
 
-            if (response.IsSuccessStatusCode)
+            if (response.Status == TaskStatus.RanToCompletion)
             {
-                var data = response.Content.ReadAsStringAsync().Result;
-                channels = JsonConvert.DeserializeObject<List<Channel>>(data);
+                //var data = response.Content.ReadAsStringAsync().Result;
+                channels = response.Result; ;
             }
 
             return channels;
@@ -36,12 +37,13 @@ namespace wakeApp.Repositories
         public ChannelDto GetChannelById(int? id)
         {
             ChannelDto channel = new ChannelDto();
-            HttpResponseMessage response = _httpClient.GetAsync(_httpClient.BaseAddress + "Channels/GetChannelByUser/" + id).Result;
+            var response = _httpClient.GetFromJsonAsync<ChannelDto>(_httpClient.BaseAddress + "Channels/GetChannelByUser/" + id);
+            response.Wait();
 
-            if (response.IsSuccessStatusCode)
+            if (response.Status == TaskStatus.RanToCompletion)
             {
-                var data = response.Content.ReadAsStringAsync().Result;
-                channel = JsonConvert.DeserializeObject<ChannelDto>(data);
+                //var data = response.Content.ReadAsStringAsync().Result;
+                channel = response.Result;
             }
 
 
@@ -56,12 +58,13 @@ namespace wakeApp.Repositories
             }
 
             List<PostVideoDto> postVideos = new List<PostVideoDto>();
-            HttpResponseMessage response = _httpClient.GetAsync(_httpClient.BaseAddress + "PostVideos/GetPostVideoById/" + id).Result;
+            var response = _httpClient.GetFromJsonAsync<List<PostVideoDto>>(_httpClient.BaseAddress + "PostVideos/GetPostVideoById/" + id);
+            response.Wait();
 
-            if (response.IsSuccessStatusCode)
+            if (response.Status == TaskStatus.RanToCompletion)
             {
-                var data = response.Content.ReadAsStringAsync().Result;
-                postVideos = JsonConvert.DeserializeObject<List<PostVideoDto>>(data);
+                //var data = response.Content.ReadAsStringAsync().Result;
+                postVideos = response.Result;
             }
 
             if (postVideos == null)
@@ -81,9 +84,11 @@ namespace wakeApp.Repositories
             var data = JsonConvert.SerializeObject(channel);
             StringContent content = new StringContent(data, Encoding.UTF8, "application/json");
 
-            HttpResponseMessage response = _httpClient.PostAsync(_httpClient.BaseAddress + "Channels", content).Result;
+            //HttpResponseMessage response = _httpClient.PostAsync(_httpClient.BaseAddress + "Channels", content).Result;
+            var response = _httpClient.PostAsJsonAsync<Channel>(_httpClient.BaseAddress + "Channels", channel);
+            response.Wait();
 
-            if (response.IsSuccessStatusCode)
+            if (response.Status == TaskStatus.RanToCompletion)
             {
                 return null;
             }
@@ -98,9 +103,10 @@ namespace wakeApp.Repositories
 
             var data = JsonConvert.SerializeObject(channel);
             StringContent content = new StringContent(data, Encoding.UTF8, "application/json");
+            var response = _httpClient.PutAsJsonAsync<Channel>(_httpClient.BaseAddress + "Channels", channel);
+            response.Wait();
 
-            HttpResponseMessage response = _httpClient.PutAsync(_httpClient.BaseAddress + "Channels", content).Result;
-            if (response.IsSuccessStatusCode)
+            if (response.Status == TaskStatus.RanToCompletion)
             {
                 return null;
             }
@@ -110,9 +116,10 @@ namespace wakeApp.Repositories
 
         public bool DeleteChannel(int id)
         {
-            HttpResponseMessage response = _httpClient.DeleteAsync(_httpClient.BaseAddress + "Channels/" + id).Result;
+            var response = _httpClient.DeleteAsync(_httpClient.BaseAddress + "Channels/" + id);
+            response.Wait();
 
-            if (!response.IsSuccessStatusCode)
+            if (response.Status != TaskStatus.RanToCompletion)
             {
                 return false;
             }

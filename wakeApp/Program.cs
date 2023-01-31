@@ -19,6 +19,7 @@ builder.Services.AddScoped<IUploadService, UploadService>();
 builder.Services.AddScoped<IPostVideoRepository, PostVideoRepository>();
 builder.Services.AddScoped<IUsersRepository, UsersRepository>();
 builder.Services.AddScoped<IChannelsRepository, ChannelsReporitory>();
+builder.Services.AddScoped<ICommentRepository, CommentRepository>();
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();

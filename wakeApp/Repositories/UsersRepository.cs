@@ -5,6 +5,7 @@ using System.Text;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication;
+using wakeApp.Dtos;
 
 namespace wakeApp.Repositories
 {
@@ -26,12 +27,13 @@ namespace wakeApp.Repositories
             }
 
             User user = new User();
-            HttpResponseMessage response = _httpClient.GetAsync(_httpClient.BaseAddress + "Users/" + id).Result;
+            //HttpResponseMessage response = _httpClient.GetAsync(_httpClient.BaseAddress + "Users/" + id).Result;
+            var response = _httpClient.GetFromJsonAsync<User>(_httpClient.BaseAddress + "Users/" + id);
+            response.Wait();
 
-            if (response.IsSuccessStatusCode)
+            if (response.Status == TaskStatus.RanToCompletion)
             {
-                var data = response.Content.ReadAsStringAsync().Result;
-                user = JsonConvert.DeserializeObject<User>(data);
+                user = response.Result;
             }
 
             if (user == null)
@@ -47,9 +49,11 @@ namespace wakeApp.Repositories
             string data = JsonConvert.SerializeObject(user);
             StringContent content = new StringContent(data, Encoding.UTF8, "application/json");
 
-            HttpResponseMessage response = _httpClient.PostAsync(_httpClient.BaseAddress + "Users/Register", content).Result;
+            //HttpResponseMessage response = _httpClient.PostAsync(_httpClient.BaseAddress + "Users/Register", content).Result;
+            var response = _httpClient.PostAsJsonAsync<User>(_httpClient.BaseAddress + "Users/Register", user);
+            response.Wait();
 
-            if (!response.IsSuccessStatusCode)
+            if (response.Status == TaskStatus.RanToCompletion)
             {
                 return null;
             }
@@ -62,11 +66,13 @@ namespace wakeApp.Repositories
             string data = JsonConvert.SerializeObject(userLogin);
             StringContent content = new StringContent(data, Encoding.UTF8, "application/json");
 
-            HttpResponseMessage response = _httpClient.PostAsync(_httpClient.BaseAddress + "Users/LoginUser", content).Result;
+            //HttpResponseMessage response = _httpClient.PostAsync(_httpClient.BaseAddress + "Users/LoginUser", content).Result;
+            var response = _httpClient.PostAsJsonAsync<UserLogin>(_httpClient.BaseAddress + "Users/LoginUser", userLogin);
+            response.Wait();
 
-            if (response.IsSuccessStatusCode)
+            if (response.Status == TaskStatus.RanToCompletion)
             {
-                data = response.Content.ReadAsStringAsync().Result;
+                data = response.Result.Content.ReadAsStringAsync().Result;
                 userLogin = JsonConvert.DeserializeObject<UserLogin>(data);
 
                 List<Claim> diretoAcesso = new List<Claim> {
@@ -96,9 +102,11 @@ namespace wakeApp.Repositories
             string data = JsonConvert.SerializeObject(user);
             StringContent content = new StringContent(data, Encoding.UTF8, "application/json");
 
-            HttpResponseMessage response = _httpClient.PutAsync(_httpClient.BaseAddress + "Users/" + id, content).Result;
+            //HttpResponseMessage response = _httpClient.PutAsync(_httpClient.BaseAddress + "Users/" + id, content).Result;
+            var response = _httpClient.PutAsJsonAsync<User>(_httpClient.BaseAddress + "Users/" + id, user);
+            response.Wait();
 
-            if (!response.IsSuccessStatusCode)
+            if (response.Status == TaskStatus.RanToCompletion)
             {
                 return null;
             }
@@ -108,9 +116,11 @@ namespace wakeApp.Repositories
 
         public bool DeleteUser(int id)
         {
-            HttpResponseMessage response = _httpClient.DeleteAsync(_httpClient.BaseAddress + "Users/" + id).Result;
+            //HttpResponseMessage response = _httpClient.DeleteAsync(_httpClient.BaseAddress + "Users/" + id).Result;
+            var response = _httpClient.DeleteAsync(_httpClient.BaseAddress + "Users/" + id);
+            response.Wait();
 
-            if (!response.IsSuccessStatusCode)
+            if (response.Status != TaskStatus.RanToCompletion)
             {
                 return false;
             }

@@ -19,7 +19,7 @@
             <h5 class="card-title">@Html.DisplayFor(model => model.PostVideoDto.Title)</h5>
             <ul>
                 <li style="display:inline-block;">
-                    
+
                 </li>
                 <li style="display:inline-block;">
                     @Html.DisplayFor(model => model.PostVideoDto.Posted)
@@ -79,7 +79,7 @@
                 }
             </ul>
             <hr />
-            
+
             <!--<partial name="../PostVideos/LikesVideo.cshtml" view-data="ViewData" />-->
             <div>
                 <h5>
@@ -94,18 +94,53 @@
             <hr />
             <div>
                 <h5>
-                    Comentários 
+                    Comentários
                 </h5>
                 <form class="row col" asp-action="CreateComment">
-                    <input type="hidden" asp-for="CommentDto.PostId" value="@Model.PostVideoDto.Id"/>
-                    <input type="hidden" asp-for="CommentDto.ChannelId" value="@Model.PostVideoDto.ChannelId"/>
-                    <input type="hidden" asp-for="CommentDto.UserId" value="@Model.PostVideoDto.UserId"/>
+                    <input type="hidden" asp-for="CommentDto.PostId" value="@Model.PostVideoDto.Id" />
+                    <input type="hidden" asp-for="CommentDto.ChannelId" value="@Model.PostVideoDto.ChannelId" />
+                    <input type="hidden" asp-for="CommentDto.UserId" value="@Model.UserId" />
                     <textarea asp-for="CommentDto.CommentText" class="form-control me-2 bg-dark" style="color:white;" placeholder="Adicionar um comentário" rows="3"></textarea>
                     <button class="col-sm-2 btn btn-dark btn-outline-info" type="submit" style="margin-top:10px; margin-bottom:10px;">Comentar</button>
                 </form>
                 @foreach (var item in Model.CommentDtos)
                 {
-                    <p>@Html.DisplayFor(modelItem => item.CommentText)</p>
+
+                    <div class="input-group">
+                        <p>
+
+                            @Html.DisplayFor(modelItem => item.CommentText)
+                                <div class="dropdown">
+                                    <button class="btn text-center text-white" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                        <i class="bi bi-three-dots-vertical"></i>
+                                    </button>
+                               
+                                    <ul class="dropdown-menu">
+                                    @if (item.UserId == Model.UserId)
+                                    {
+                                        <li>
+                                            <a class="dropdown-item" href="#">
+                                                <form asp-action="DeleteComment">
+                                                <input type="hidden" asp-for="IdVideo" value="@item.PostId" />
+                                                <input type="hidden" asp-for="IdComment" value="@item.Id" />
+                                                <input type="hidden" asp-for="UserId" value="@Model.PostVideoDto.UserId" />
+                                                <button class="border-0 bg-transparent link-primary text-start" type="submit" style="">
+                                                    Deletar
+                                                </button>
+                                            </form>
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a class="dropdown-item" href="#">
+                                                Editar
+                                            </a>
+                                            </li>
+                                    }
+                                    <li><a class="dropdown-item btn-primary link-primary" href="#">Denunciar</a></li>
+                                    </ul>
+                                </div>
+                        </p>
+                    </div>
                 }
             </div>
         </div>

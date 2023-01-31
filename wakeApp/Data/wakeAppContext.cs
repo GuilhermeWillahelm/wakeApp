@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using wakeApp.Models;
+using wakeApp.Dtos;
 
 namespace wakeApp.Data
 {
@@ -20,5 +21,6 @@ namespace wakeApp.Data
         public DbSet<UserLogin> UserLogins { get; set; }
         public DbSet<Channel> Channels { get; set; }
         public DbSet<Evaluation> Evaluations { get; set; }
+        public DbSet<wakeApp.Dtos.CommentDto> CommentDto { get; set; }
     }
 }
